@@ -1,4 +1,33 @@
-/* VS Code IDE Theme Styling */
+/* GitHub Dark Mode Color System & IDE Theme */
+:root {
+    --gh-bg-canvas: #0d1117;
+    --gh-bg-subtle: #161b22;
+    --gh-bg-header: #161b22;
+    --gh-border-default: #30363d;
+    --gh-border-subtle: #21262d;
+    
+    --gh-text-primary: #c9d1d9;
+    --gh-text-secondary: #8b949e;
+    --gh-text-heading: #f0f6fc;
+    
+    --gh-blue: #58a6ff;
+    --gh-blue-btn: #238636;
+    --gh-green: #3fb950;
+    --gh-green-bg: rgba(46, 160, 67, 0.15);
+    --gh-red: #f85149;
+    --gh-red-bg: rgba(248, 81, 73, 0.15);
+    --gh-yellow: #d29922;
+    --gh-yellow-bg: rgba(210, 153, 34, 0.15);
+    --gh-purple: #d2a8ff;
+    
+    /* Syntax Highlighting */
+    --syn-keyword: #ff7b72;
+    --syn-string: #a5d6ff;
+    --syn-function: #d2a8ff;
+    --syn-variable: #79c0ff;
+    --syn-comment: #8b949e;
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -6,9 +35,9 @@
 }
 
 body {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    background-color: #181818;
-    color: #cccccc;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+    background-color: var(--gh-bg-canvas);
+    color: var(--gh-text-primary);
     height: 100vh;
     overflow: hidden;
 }
@@ -21,26 +50,26 @@ body {
 
 /* Titlebar */
 .titlebar {
-    background-color: #323233;
-    height: 35px;
+    background-color: var(--gh-bg-subtle);
+    height: 38px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 12px;
-    font-size: 12px;
-    color: #cccccc;
+    padding: 0 16px;
+    font-size: 13px;
+    color: var(--gh-text-primary);
     user-select: none;
-    border-bottom: 1px solid #252526;
+    border-bottom: 1px solid var(--gh-border-default);
 }
 
 .window-controls {
     display: flex;
-    gap: 7px;
+    gap: 8px;
 }
 
 .dot {
-    width: 11px;
-    height: 11px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     display: inline-block;
 }
@@ -50,18 +79,25 @@ body {
 .dot.green { background-color: #27c93f; }
 
 .titlebar-text {
-    font-size: 12px;
-    font-weight: 500;
-    color: #9d9d9d;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gh-text-heading);
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .branch-tag {
-    font-family: 'Fira Code', monospace;
+    font-family: 'Fira Code', ui-monospace, SFMono-Regular, monospace;
     font-size: 11px;
-    color: #007acc;
+    color: var(--gh-blue);
+    background: rgba(56, 139, 253, 0.15);
+    padding: 2px 8px;
+    border-radius: 12px;
+    border: 1px solid rgba(56, 139, 253, 0.4);
 }
 
-/* VS Code Body */
+/* VS Code / GitHub Body */
 .vscode-body {
     display: flex;
     flex: 1;
@@ -70,20 +106,20 @@ body {
 
 /* Activity Bar */
 .activity-bar {
-    width: 48px;
-    background-color: #333333;
+    width: 50px;
+    background-color: var(--gh-bg-subtle);
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 10px;
-    gap: 16px;
-    border-right: 1px solid #252526;
+    padding-top: 12px;
+    gap: 18px;
+    border-right: 1px solid var(--gh-border-default);
 }
 
 .act-icon {
     font-size: 20px;
     cursor: pointer;
-    opacity: 0.6;
+    opacity: 0.65;
     transition: opacity 0.2s;
 }
 
@@ -92,15 +128,15 @@ body {
 }
 
 .act-icon.active {
-    border-left: 2px solid #ffffff;
+    border-left: 2px solid var(--gh-blue);
     padding-left: 4px;
 }
 
 /* Sidebar */
 .sidebar {
-    width: 220px;
-    background-color: #252526;
-    border-right: 1px solid #1e1e1e;
+    width: 230px;
+    background-color: var(--gh-bg-subtle);
+    border-right: 1px solid var(--gh-border-default);
     display: flex;
     flex-direction: column;
 }
@@ -114,8 +150,8 @@ body {
 .sidebar-title {
     font-size: 11px;
     font-weight: 700;
-    color: #bbbbbb;
-    padding: 10px 12px 6px 12px;
+    color: var(--gh-text-secondary);
+    padding: 12px 14px 6px 14px;
     letter-spacing: 0.05em;
 }
 
@@ -126,16 +162,16 @@ body {
 .tree-section {
     font-size: 10px;
     font-weight: 700;
-    color: #6e6e6e;
-    padding: 8px 12px 4px 12px;
+    color: var(--gh-text-secondary);
+    padding: 10px 14px 4px 14px;
 }
 
 .file-item {
     font-family: 'Fira Code', monospace;
     font-size: 12px;
-    padding: 6px 16px;
+    padding: 7px 16px;
     cursor: pointer;
-    color: #9cdcfe;
+    color: var(--syn-variable);
     display: flex;
     align-items: center;
     gap: 8px;
@@ -143,13 +179,13 @@ body {
 }
 
 .file-item:hover {
-    background-color: #2a2d2e;
+    background-color: var(--gh-border-subtle);
 }
 
 .file-item.active {
-    background-color: #37373d;
-    color: #ffffff;
-    font-weight: 600;
+    background-color: #21262d;
+    color: var(--gh-text-heading);
+    border-left: 3px solid var(--gh-blue);
 }
 
 /* Workspace & Tabs */
@@ -157,23 +193,23 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    background-color: #1e1e1e;
+    background-color: var(--gh-bg-canvas);
     overflow: hidden;
 }
 
 .tabs-bar {
-    background-color: #252526;
+    background-color: var(--gh-bg-subtle);
     display: flex;
     overflow-x: auto;
-    border-bottom: 1px solid #1e1e1e;
+    border-bottom: 1px solid var(--gh-border-default);
 }
 
 .editor-tab {
-    background-color: #2d2d2d;
+    background-color: var(--gh-bg-subtle);
     border: none;
-    border-right: 1px solid #252526;
-    color: #969696;
-    padding: 8px 16px;
+    border-right: 1px solid var(--gh-border-default);
+    color: var(--gh-text-secondary);
+    padding: 9px 18px;
     font-family: 'Fira Code', monospace;
     font-size: 12px;
     cursor: pointer;
@@ -184,25 +220,26 @@ body {
 }
 
 .editor-tab:hover {
-    background-color: #323233;
-    color: #cccccc;
+    background-color: #21262d;
+    color: var(--gh-text-primary);
 }
 
 .editor-tab.active {
-    background-color: #1e1e1e;
-    color: #ffffff;
-    border-top: 2px solid #007acc;
+    background-color: var(--gh-bg-canvas);
+    color: var(--gh-blue);
+    border-top: 2px solid var(--gh-blue);
+    font-weight: 600;
 }
 
 .close-btn {
     font-size: 14px;
-    color: #6e6e6e;
+    color: var(--gh-text-secondary);
     margin-left: 4px;
 }
 
 .editor-content {
     flex: 1;
-    padding: 16px;
+    padding: 18px;
     overflow-y: auto;
 }
 
@@ -215,11 +252,11 @@ body {
     display: block;
 }
 
-/* Split View for Predictor */
+/* Split View */
 .split-view {
     display: grid;
     grid-template-columns: 1.1fr 0.9fr;
-    gap: 16px;
+    gap: 18px;
     height: 100%;
 }
 
@@ -230,10 +267,10 @@ body {
 }
 
 .code-panel, .terminal-panel {
-    background-color: #252526;
-    border: 1px solid #333333;
+    background-color: var(--gh-bg-subtle);
+    border: 1px solid var(--gh-border-default);
     border-radius: 6px;
-    padding: 14px;
+    padding: 16px;
     display: flex;
     flex-direction: column;
 }
@@ -242,242 +279,247 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #333333;
-    padding-bottom: 8px;
-    margin-bottom: 12px;
+    border-bottom: 1px solid var(--gh-border-default);
+    padding-bottom: 10px;
+    margin-bottom: 14px;
 }
 
 .panel-title {
     font-family: 'Fira Code', monospace;
     font-size: 12px;
-    font-weight: 600;
-    color: #4ec9b0;
+    font-weight: 700;
+    color: var(--syn-function);
 }
 
-/* Form Code Controls */
+/* Code Controls */
 .editor-form {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
 }
 
 .code-line {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 5px;
 }
 
 .code-line label {
     font-family: 'Fira Code', monospace;
     font-size: 12px;
-    color: #d4d4d4;
+    color: var(--gh-text-primary);
 }
 
-.kw { color: #569cd6; font-weight: 600; }
-.fn { color: #dcdcaa; font-weight: 600; }
-.var { color: #9cdcfe; font-weight: 600; }
-.req { color: #f14c4c; }
+.kw { color: var(--syn-keyword); font-weight: 700; }
+.fn { color: var(--syn-function); font-weight: 700; }
+.var { color: var(--syn-variable); font-weight: 700; }
+.req { color: var(--gh-red); }
 
 .code-row-3 {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
+    gap: 10px;
 }
 
 .vsc-input, .vsc-select, .vsc-textarea {
-    background-color: #1e1e1e;
-    border: 1px solid #3c3c3c;
-    border-radius: 4px;
-    padding: 6px 10px;
-    color: #ce9178;
+    background-color: var(--gh-bg-canvas);
+    border: 1px solid var(--gh-border-default);
+    border-radius: 6px;
+    padding: 7px 12px;
+    color: var(--syn-string);
     font-family: 'Fira Code', monospace;
     font-size: 12px;
 }
 
 .vsc-input:focus, .vsc-select:focus, .vsc-textarea:focus {
     outline: none;
-    border-color: #007acc;
+    border-color: var(--gh-blue);
+    box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.2);
 }
 
 .vsc-btn {
-    font-family: 'Fira Code', monospace;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     font-size: 12px;
     font-weight: 600;
-    padding: 6px 12px;
-    border-radius: 4px;
+    padding: 7px 14px;
+    border-radius: 6px;
     border: 1px solid transparent;
     cursor: pointer;
-    transition: background 0.15s;
+    transition: background 0.15s ease;
 }
 
 .vsc-btn.primary {
-    background-color: #0e639c;
+    background-color: #238636;
     color: #ffffff;
+    border-color: rgba(240, 246, 252, 0.1);
 }
 
 .vsc-btn.primary:hover {
-    background-color: #1177bb;
+    background-color: #2ea043;
 }
 
 .vsc-btn.secondary {
-    background-color: #3a3d41;
-    color: #ffffff;
+    background-color: #21262d;
+    color: var(--gh-text-primary);
+    border-color: var(--gh-border-default);
 }
 
 .vsc-btn.secondary:hover {
-    background-color: #45494e;
+    background-color: #30363d;
 }
 
 .vsc-btn.danger {
-    background-color: #8b0000;
+    background-color: #da3633;
     color: #ffffff;
 }
 
 .vsc-btn.danger:hover {
-    background-color: #a00000;
+    background-color: #f85149;
 }
 
 .vsc-btn.success {
-    background-color: #16a34a;
+    background-color: #238636;
     color: #ffffff;
 }
 
 .vsc-btn.success:hover {
-    background-color: #15803d;
+    background-color: #2ea043;
 }
 
 .vsc-btn.full {
     width: 100%;
-    padding: 10px;
-    margin-top: 4px;
+    padding: 11px;
+    margin-top: 6px;
+    font-size: 13px;
 }
 
 .preset-btn-group {
     display: flex;
-    gap: 6px;
+    gap: 8px;
 }
 
-/* Terminal Panel Output */
+/* Terminal Console Output */
 .terminal-placeholder {
-    padding: 30px 10px;
+    padding: 35px 12px;
     font-family: 'Fira Code', monospace;
     font-size: 12px;
 }
 
 .comment {
-    color: #6a9955;
+    color: var(--syn-comment);
 }
 
 .score-display {
     text-align: center;
-    background-color: #1e1e1e;
-    border: 1px solid #333333;
+    background-color: var(--gh-bg-canvas);
+    border: 1px solid var(--gh-border-default);
     border-radius: 6px;
-    padding: 14px;
-    margin-bottom: 14px;
+    padding: 16px;
+    margin-bottom: 16px;
 }
 
 .score-val {
     font-family: 'Fira Code', monospace;
-    font-size: 2.2rem;
-    font-weight: 700;
-    color: #ffffff;
+    font-size: 2.4rem;
+    font-weight: 800;
+    color: var(--gh-text-heading);
 }
 
 .score-meta {
-    font-size: 10px;
+    font-size: 11px;
     text-transform: uppercase;
-    color: #6e6e6e;
+    color: var(--gh-text-secondary);
     letter-spacing: 0.05em;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
 }
 
 .badge {
     display: inline-block;
-    padding: 4px 12px;
-    border-radius: 12px;
+    padding: 4px 14px;
+    border-radius: 14px;
     font-size: 11px;
     font-weight: 700;
     font-family: 'Fira Code', monospace;
 }
 
-.badge.real { background: rgba(39, 201, 63, 0.2); color: #4ec9b0; border: 1px solid #4ec9b0; }
-.badge.caution { background: rgba(255, 189, 46, 0.2); color: #dcdcaa; border: 1px solid #dcdcaa; }
-.badge.fake { background: rgba(255, 95, 86, 0.2); color: #f14c4c; border: 1px solid #f14c4c; }
+.badge.real { background: var(--gh-green-bg); color: var(--gh-green); border: 1px solid var(--gh-green); }
+.badge.caution { background: var(--gh-yellow-bg); color: var(--gh-yellow); border: 1px solid var(--gh-yellow); }
+.badge.fake { background: var(--gh-red-bg); color: var(--gh-red); border: 1px solid var(--gh-red); }
 
 .out-section {
-    margin-bottom: 12px;
+    margin-bottom: 14px;
 }
 
 .out-title {
     font-family: 'Fira Code', monospace;
     font-size: 11px;
-    color: #6a9955;
-    margin-bottom: 6px;
+    color: var(--syn-comment);
+    margin-bottom: 8px;
 }
 
 .out-ul {
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
 }
 
 .out-ul li {
     font-family: 'Fira Code', monospace;
     font-size: 11px;
-    padding: 5px 8px;
+    padding: 6px 10px;
     border-radius: 4px;
-    background-color: #1e1e1e;
+    background-color: var(--gh-bg-canvas);
 }
 
-.out-ul li.high { color: #f14c4c; border-left: 3px solid #f14c4c; }
-.out-ul li.med { color: #dcdcaa; border-left: 3px solid #dcdcaa; }
-.out-ul li.good { color: #4ec9b0; border-left: 3px solid #4ec9b0; }
+.out-ul li.high { color: var(--gh-red); border-left: 3px solid var(--gh-red); }
+.out-ul li.med { color: var(--gh-yellow); border-left: 3px solid var(--gh-yellow); }
+.out-ul li.good { color: var(--gh-green); border-left: 3px solid var(--gh-green); }
 
 .tokens-box {
     display: flex;
     flex-wrap: wrap;
-    gap: 4px;
+    gap: 5px;
 }
 
 .tag {
     font-family: 'Fira Code', monospace;
     font-size: 11px;
-    padding: 2px 6px;
-    border-radius: 3px;
+    padding: 3px 8px;
+    border-radius: 4px;
 }
 
-.tag.spam { background-color: rgba(241, 76, 76, 0.2); color: #f14c4c; }
-.tag.legit { background-color: rgba(78, 201, 176, 0.2); color: #4ec9b0; }
+.tag.spam { background-color: var(--gh-red-bg); color: var(--gh-red); border: 1px solid rgba(248, 81, 73, 0.4); }
+.tag.legit { background-color: var(--gh-green-bg); color: var(--gh-green); border: 1px solid rgba(63, 185, 80, 0.4); }
 
 .out-advice {
     font-family: 'Fira Code', monospace;
     font-size: 11px;
-    padding: 10px;
-    background-color: #1e1e1e;
-    border-left: 3px solid #007acc;
-    margin-top: 10px;
+    padding: 12px;
+    background-color: var(--gh-bg-canvas);
+    border-left: 3px solid var(--gh-blue);
+    border-radius: 4px;
+    margin-top: 12px;
 }
 
-/* EDA & Charts in VS Code Theme */
+/* EDA & Charts in GitHub Dark Theme */
 .eda-view {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 18px;
 }
 
 .eda-header h2 {
     font-family: 'Fira Code', monospace;
     font-size: 16px;
-    color: #4ec9b0;
+    color: var(--syn-function);
     margin-bottom: 4px;
 }
 
 .grid-2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 14px;
+    gap: 16px;
 }
 
 @media (max-width: 768px) {
@@ -487,25 +529,25 @@ body {
 }
 
 .vsc-card {
-    background-color: #252526;
-    border: 1px solid #333333;
+    background-color: var(--gh-bg-subtle);
+    border: 1px solid var(--gh-border-default);
     border-radius: 6px;
-    padding: 12px;
+    padding: 14px;
 }
 
 .vsc-card h4 {
     font-family: 'Fira Code', monospace;
     font-size: 12px;
-    color: #9cdcfe;
-    margin-bottom: 8px;
+    color: var(--syn-variable);
+    margin-bottom: 10px;
 }
 
 .chart-holder {
-    height: 240px;
+    height: 250px;
 }
 
 .chart-holder.full {
-    height: 300px;
+    height: 320px;
 }
 
 .vsc-table {
@@ -513,29 +555,28 @@ body {
     border-collapse: collapse;
     font-family: 'Fira Code', monospace;
     font-size: 12px;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
 }
 
 .vsc-table th, .vsc-table td {
-    padding: 8px 12px;
-    border: 1px solid #333333;
+    padding: 9px 14px;
+    border: 1px solid var(--gh-border-default);
     text-align: left;
 }
 
 .vsc-table th {
-    background-color: #2d2d2d;
-    color: #569cd6;
+    background-color: #21262d;
+    color: var(--syn-keyword);
 }
 
 .findings-list {
-    margin-left: 16px;
+    margin-left: 18px;
     font-family: 'Fira Code', monospace;
     font-size: 11px;
-
 }
 
 .findings-list li {
-    margin-bottom: 8px;
+    margin-bottom: 10px;
 }
 
 .hidden {
@@ -544,19 +585,20 @@ body {
 
 /* Statusbar */
 .statusbar {
-    background-color: #007acc;
-    height: 24px;
+    background-color: #161b22;
+    border-top: 1px solid var(--gh-border-default);
+    height: 26px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 12px;
+    padding: 0 14px;
     font-family: 'Fira Code', monospace;
     font-size: 11px;
-    color: #ffffff;
+    color: var(--gh-text-secondary);
     user-select: none;
 }
 
 .status-left, .status-right {
     display: flex;
-    gap: 14px;
+    gap: 16px;
 }
