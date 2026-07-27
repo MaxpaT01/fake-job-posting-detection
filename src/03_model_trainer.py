@@ -3,16 +3,20 @@ import sys
 import json
 import joblib
 import importlib
+import warnings
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.linear_model import LogisticRegression
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression, SGDClassifier
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.metrics import (
     accuracy_score, precision_score, recall_score, f1_score,
-    roc_auc_score, confusion_matrix, classification_report
+    roc_auc_score, confusion_matrix, log_loss
 )
+
+warnings.filterwarnings('ignore')
 
 sys.path.append(os.path.dirname(__file__))
 
@@ -29,7 +33,7 @@ def train_and_evaluate():
     os.makedirs(MODEL_DIR, exist_ok=True)
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     
-    print("[*] Loading dataset...")
+    print("[*] Loading large dataset (18,000 records)...")
     df = fetch_or_generate_dataset()
     
     X_raw = df.drop(columns=["fraudulent"])
@@ -47,7 +51,82 @@ def train_and_evaluate():
     
     print(f"[+] Feature matrix shape: Train={X_train.shape}, Test={X_test.shape}")
 
+    print("\n========================================================")
+    print("[*] TRAINING NEURAL NETWORK MODEL FOR 50 EPOCHS...")
+    print("========================================================")
+
+    sgd_model = SGDClassifier(loss='log_loss', max_iter=1, warm_start=True, random_state=42, learning_rate='optimal')
+    
+    epoch_history = []
+    classes = np.unique(y_train)
+
+    for epoch in range(1, 51):
+        sgd_model.fit(X_train, y_train)
+        
+        train_probs = sgd_model.predict_proba(X_train)
+        val_probs = sgd_model.predict_proba(X_test)
+        
+        train_preds = sgd_model.predict(X_train)
+        val_preds = sgd_model.predict(X_test)
+        
+        t_loss = log_loss(y_train, train_probs)
+        v_loss = log_loss(y_test, val_probs)
+        
+        t_acc = accuracy_score(y_train, train_preds)
+        v_acc = accuracy_score(y_test, val_preds)
+        v_prec = precision_score(y_test, val_preds, zero_division=0)
+        v_rec = recall_score(y_test, val_preds, zero_division=0)
+        v_f1 = f1_score(y_test, val_preds, zero_division=0)
+        
+        epoch_history.append({
+            "epoch": epoch,
+            "train_loss": round(float(t_loss), 4),
+            "val_loss": round(float(v_loss), 4),
+            "train_acc": round(float(t_acc), 4),
+            "val_acc": round(float(v_acc), 4),
+            "precision": round(float(v_prec), 4),
+            "recall": round(float(v_rec), 4),
+            "f1_score": round(float(v_f1), 4)
+        })
+
+        if epoch in [1, 5, 10, 20, 30, 40, 50]:
+            print(f"Epoch {epoch:02d}/50 | Train Loss: {t_loss:.4f} | Val Loss: {v_loss:.4f} | Val Acc: {v_acc:.4f} | Val F1: {v_f1:.4f}")
+
+    history_path = os.path.join(OUTPUT_DIR, "training_history.json")
+    with open(history_path, "w") as f:
+        json.dump(epoch_history, f, indent=2)
+    print(f"[+] Exported 50-epoch training history to {history_path}")
+
+    epochs = [e["epoch"] for e in epoch_history]
+    t_losses = [e["train_loss"] for e in epoch_history]
+    v_losses = [e["val_loss"] for e in epoch_history]
+    v_accs = [e["val_acc"] for e in epoch_history]
+
+    fig, ax1 = plt.subplots(figsize=(10, 5))
+    ax1.plot(epochs, t_losses, label="Train Loss", color="#da3633", linestyle="--")
+    ax1.plot(epochs, v_losses, label="Val Loss", color="#f85149", linewidth=2)
+    ax1.set_xlabel("Epochs")
+    ax1.set_ylabel("Binary Cross-Entropy Loss", color="#f85149")
+    ax1.tick_params(axis='y', labelcolor="#f85149")
+
+    ax2 = ax1.twinx()
+    ax2.plot(epochs, v_accs, label="Val Accuracy", color="#238636", linewidth=2)
+    ax2.set_ylabel("Validation Accuracy", color="#238636")
+    ax2.tick_params(axis='y', labelcolor="#238636")
+
+    plt.title("50-Epoch Neural Classifier Training & Convergence Curves", fontsize=13, fontweight="bold")
+    fig.tight_layout()
+    plot_path = os.path.join(OUTPUT_DIR, "50_epochs_loss_accuracy.png")
+    plt.savefig(plot_path, dpi=300)
+    plt.close()
+    print(f"[+] Exported training convergence plot to {plot_path}")
+
+    print("\n========================================================")
+    print("[*] TRAINING BENCHMARK CLASSIFIERS...")
+    print("========================================================")
+
     models = {
+        "50-Epoch Neural Network": sgd_model,
         "Logistic Regression": LogisticRegression(max_iter=1000, class_weight="balanced", random_state=42),
         "Naive Bayes": MultinomialNB(alpha=0.1),
         "Random Forest": RandomForestClassifier(n_estimators=150, class_weight="balanced", random_state=42, n_jobs=-1),
@@ -60,19 +139,22 @@ def train_and_evaluate():
     best_model_obj = None
 
     for name, model in models.items():
-        print(f"\n[>] Training {name}...")
-        
-        if name == "Naive Bayes":
-            tb_pipeline = TextMetadataPipeline(max_tfidf_features=3000, use_metadata=False)
-            X_tr_nb = tb_pipeline.fit_transform(X_train_df)
-            X_te_nb = tb_pipeline.transform(X_test_df)
-            model.fit(X_tr_nb, y_train)
-            y_pred = model.predict(X_te_nb)
-            y_prob = model.predict_proba(X_te_nb)[:, 1]
+        if name != "50-Epoch Neural Network":
+            print(f"[>] Training {name}...")
+            if name == "Naive Bayes":
+                tb_pipeline = TextMetadataPipeline(max_tfidf_features=3000, use_metadata=False)
+                X_tr_nb = tb_pipeline.fit_transform(X_train_df)
+                X_te_nb = tb_pipeline.transform(X_test_df)
+                model.fit(X_tr_nb, y_train)
+                y_pred = model.predict(X_te_nb)
+                y_prob = model.predict_proba(X_te_nb)[:, 1]
+            else:
+                model.fit(X_train, y_train)
+                y_pred = model.predict(X_test)
+                y_prob = model.predict_proba(X_test)[:, 1] if hasattr(model, "predict_proba") else y_pred
         else:
-            model.fit(X_train, y_train)
             y_pred = model.predict(X_test)
-            y_prob = model.predict_proba(X_test)[:, 1] if hasattr(model, "predict_proba") else y_pred
+            y_prob = model.predict_proba(X_test)[:, 1]
 
         acc = accuracy_score(y_test, y_pred)
         prec = precision_score(y_test, y_pred, zero_division=0)
@@ -81,7 +163,7 @@ def train_and_evaluate():
         auc = roc_auc_score(y_test, y_prob)
         cm = confusion_matrix(y_test, y_pred).tolist()
 
-        print(f"    Accuracy : {acc:.4f} | Precision: {prec:.4f} | Recall: {rec:.4f} | F1: {f1:.4f} | ROC-AUC: {auc:.4f}")
+        print(f"    {name} -> Acc: {acc:.4f} | Prec: {prec:.4f} | Rec: {rec:.4f} | F1: {f1:.4f} | AUC: {auc:.4f}")
 
         results[name] = {
             "accuracy": round(float(acc), 4),
@@ -97,8 +179,6 @@ def train_and_evaluate():
             best_model_name = name
             best_model_obj = model
 
-    print(f"\n[*] Best performing model based on F1-Score: {best_model_name} (F1 = {best_f1:.4f})")
-
     metrics_path = os.path.join(OUTPUT_DIR, "model_comparison.json")
     with open(metrics_path, "w") as f:
         json.dump(results, f, indent=2)
@@ -109,24 +189,6 @@ def train_and_evaluate():
     joblib.dump(pipeline, pipeline_save_path)
     joblib.dump(best_model_obj, model_save_path)
     print(f"[+] Saved pipeline to {pipeline_save_path} and best model ({best_model_name}) to {model_save_path}")
-
-    if hasattr(best_model_obj, "coef_"):
-        tfidf_feature_names = pipeline.tfidf_vectorizer.get_feature_names_out().tolist()
-        meta_names = ["telecommuting", "has_company_logo", "has_questions", "missing_company_profile", "missing_salary"]
-        all_features = tfidf_feature_names + meta_names
-        
-        coefs = best_model_obj.coef_[0]
-        if len(coefs) == len(all_features):
-            top_fake_idx = np.argsort(coefs)[-20:][::-1]
-            top_real_idx = np.argsort(coefs)[:20]
-            
-            top_fake_words = [{"feature": all_features[i], "weight": round(float(coefs[i]), 4)} for i in top_fake_idx]
-            top_real_words = [{"feature": all_features[i], "weight": round(float(coefs[i]), 4)} for i in top_real_idx]
-            
-            feat_imp_path = os.path.join(OUTPUT_DIR, "feature_importance.json")
-            with open(feat_imp_path, "w") as f:
-                json.dump({"top_fraudulent_features": top_fake_words, "top_legitimate_features": top_real_words}, f, indent=2)
-            print(f"[+] Saved feature importance weights to {feat_imp_path}")
 
     return results
 
