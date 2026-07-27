@@ -8,6 +8,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.linear_model import LogisticRegression, SGDClassifier
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
@@ -33,7 +34,7 @@ def train_and_evaluate():
     os.makedirs(MODEL_DIR, exist_ok=True)
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     
-    print("[*] Loading large dataset (18,000 records)...")
+    print("[*] Loading benchmark dataset (18,000 records)...")
     df = fetch_or_generate_dataset()
     
     X_raw = df.drop(columns=["fraudulent"])
@@ -55,11 +56,10 @@ def train_and_evaluate():
     print("[*] TRAINING NEURAL NETWORK MODEL FOR 50 EPOCHS...")
     print("========================================================")
 
-    sgd_model = SGDClassifier(loss='log_loss', max_iter=1, warm_start=True, random_state=42, learning_rate='optimal')
+    sgd_model = SGDClassifier(loss='log_loss', max_iter=1, warm_start=True, random_state=42, learning_rate='optimal', alpha=1e-4)
     
     epoch_history = []
-    classes = np.unique(y_train)
-
+    
     for epoch in range(1, 51):
         sgd_model.fit(X_train, y_train)
         
@@ -119,7 +119,6 @@ def train_and_evaluate():
     plot_path = os.path.join(OUTPUT_DIR, "50_epochs_loss_accuracy.png")
     plt.savefig(plot_path, dpi=300)
     plt.close()
-    print(f"[+] Exported training convergence plot to {plot_path}")
 
     print("\n========================================================")
     print("[*] TRAINING BENCHMARK CLASSIFIERS...")
@@ -127,10 +126,10 @@ def train_and_evaluate():
 
     models = {
         "50-Epoch Neural Network": sgd_model,
+        "Gradient Boosting": GradientBoostingClassifier(n_estimators=100, random_state=42),
         "Logistic Regression": LogisticRegression(max_iter=1000, class_weight="balanced", random_state=42),
-        "Naive Bayes": MultinomialNB(alpha=0.1),
-        "Random Forest": RandomForestClassifier(n_estimators=150, class_weight="balanced", random_state=42, n_jobs=-1),
-        "Gradient Boosting": GradientBoostingClassifier(n_estimators=100, random_state=42)
+        "Random Forest": RandomForestClassifier(n_estimators=100, max_depth=15, random_state=42, n_jobs=-1),
+        "Multinomial Naive Bayes": MultinomialNB(alpha=1.0)
     }
 
     results = {}
@@ -141,7 +140,7 @@ def train_and_evaluate():
     for name, model in models.items():
         if name != "50-Epoch Neural Network":
             print(f"[>] Training {name}...")
-            if name == "Naive Bayes":
+            if name == "Multinomial Naive Bayes":
                 tb_pipeline = TextMetadataPipeline(max_tfidf_features=3000, use_metadata=False)
                 X_tr_nb = tb_pipeline.fit_transform(X_train_df)
                 X_te_nb = tb_pipeline.transform(X_test_df)
