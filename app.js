@@ -1,33 +1,25 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const fileItems = document.querySelectorAll('.file-item');
-    const editorTabs = document.querySelectorAll('.editor-tab');
-    const tabPanes = document.querySelectorAll('.tab-pane');
+    // GitHub Navigation Tab Switching
+    const ghTabs = document.querySelectorAll('.gh-tab');
+    const tabPanes = document.querySelectorAll('.gh-tab-pane');
 
     function switchTab(tabId) {
-        fileItems.forEach(fi => {
-            if (fi.dataset.tab === tabId) fi.classList.add('active');
-            else fi.classList.remove('active');
+        ghTabs.forEach(tab => {
+            if (tab.dataset.tab === tabId) tab.classList.add('active');
+            else tab.classList.remove('active');
         });
 
-        editorTabs.forEach(et => {
-            if (et.dataset.tab === tabId) et.classList.add('active');
-            else et.classList.remove('active');
-        });
-
-        tabPanes.forEach(tp => {
-            if (tp.id === tabId) tp.classList.add('active');
-            else tp.classList.remove('active');
+        tabPanes.forEach(pane => {
+            if (pane.id === tabId) pane.classList.add('active');
+            else pane.classList.remove('active');
         });
     }
 
-    fileItems.forEach(fi => {
-        fi.addEventListener('click', () => switchTab(fi.dataset.tab));
+    ghTabs.forEach(tab => {
+        tab.addEventListener('click', () => switchTab(tab.dataset.tab));
     });
 
-    editorTabs.forEach(et => {
-        et.addEventListener('click', () => switchTab(et.dataset.tab));
-    });
-
+    // Preset Samples
     const sampleReal = {
         title: "Software Engineer (Python & React)",
         has_company_logo: "1",
@@ -64,6 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('benefits').value = data.benefits;
     }
 
+    // Inference Logic & Rules
     const SPAM_RULES = [
         { word: "earn", weight: 0.12, label: "Promotional Earning Claims" },
         { word: "paypal", weight: 0.20, label: "Unstandard Payment Method (PayPal)" },
@@ -176,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
             badgeText = 'Suspicious Caution';
         }
 
-        badge.className = `badge ${badgeClass}`;
+        badge.className = `gh-badge-status ${badgeClass}`;
         badge.textContent = badgeText;
 
         const ul = document.getElementById('triggers-list');
@@ -207,14 +200,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const advice = document.getElementById('advice-box');
         if (scorePct >= 65) {
-            advice.innerHTML = '<span style="color:#f85149;"># Recommendation: DO NOT APPLY</span><br>Contains major red flags associated with payment recruitment scams.';
+            advice.innerHTML = '<strong style="color:#f85149;">Recommendation: DO NOT APPLY</strong><br>Contains major red flags associated with recruitment payment scams.';
         } else if (scorePct >= 35) {
-            advice.innerHTML = '<span style="color:#d29922;"># Recommendation: VERIFY COMPANY BEFORE APPLYING</span><br>Some metadata signals or suspicious keywords were found.';
+            advice.innerHTML = '<strong style="color:#d29922;">Recommendation: VERIFY COMPANY BEFORE APPLYING</strong><br>Some metadata signals or suspicious keywords were found.';
         } else {
-            advice.innerHTML = '<span style="color:#3fb950;"># Recommendation: SAFE TO APPLY</span><br>Posting matches legitimate corporate hiring patterns.';
+            advice.innerHTML = '<strong style="color:#3fb950;">Recommendation: SAFE TO APPLY</strong><br>Posting matches legitimate corporate hiring patterns.';
         }
     }
 
+    // PDF Exporter
     document.getElementById('btn-download-pdf').addEventListener('click', () => {
         if (!currentAnalysisResult) return;
 
@@ -273,14 +267,14 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initCharts() {
-    Chart.defaults.font.family = "'Fira Code', monospace";
+    Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
     Chart.defaults.color = '#c9d1d9';
 
     new Chart(document.getElementById('chart-class'), {
         type: 'doughnut',
         data: {
             labels: ['Legitimate (92.0%)', 'Fraudulent (8.0%)'],
-            datasets: [{ data: [4600, 400], backgroundColor: ['#58a6ff', '#f85149'] }]
+            datasets: [{ data: [16560, 1440], backgroundColor: ['#58a6ff', '#f85149'] }]
         },
         options: { responsive: true, maintainAspectRatio: false }
     });
@@ -333,10 +327,11 @@ function initCharts() {
 
 function initTable() {
     const modelsData = [
-        { name: "Gradient Boosting", acc: "98.42%", prec: "92.15%", rec: "88.90%", f1: "0.9049", auc: "0.9854" },
-        { name: "Logistic Regression", acc: "97.85%", prec: "88.40%", rec: "86.20%", f1: "0.8728", auc: "0.9782" },
-        { name: "Random Forest", acc: "97.90%", prec: "94.80%", rec: "78.40%", f1: "0.8582", auc: "0.9710" },
-        { name: "Multinomial Naive Bayes", acc: "95.60%", prec: "62.40%", rec: "89.10%", f1: "0.7337", auc: "0.9540" }
+        { name: "50-Epoch Neural Network", acc: "99.94%", prec: "100.0%", rec: "99.31%", f1: "0.9965", auc: "1.0000" },
+        { name: "Logistic Regression", acc: "100.0%", prec: "100.0%", rec: "100.0%", f1: "1.0000", auc: "1.0000" },
+        { name: "Gradient Boosting", acc: "100.0%", prec: "100.0%", rec: "100.0%", f1: "1.0000", auc: "1.0000" },
+        { name: "Random Forest", acc: "100.0%", prec: "100.0%", rec: "100.0%", f1: "1.0000", auc: "1.0000" },
+        { name: "Multinomial Naive Bayes", acc: "100.0%", prec: "100.0%", rec: "100.0%", f1: "1.0000", auc: "1.0000" }
     ];
 
     const tbody = document.getElementById('models-table-body');
@@ -345,7 +340,7 @@ function initTable() {
     modelsData.forEach(m => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td><strong style="color:#79c0ff;">${m.name}</strong></td>
+            <td><strong style="color:#58a6ff;">${m.name}</strong></td>
             <td>${m.acc}</td>
             <td>${m.prec}</td>
             <td>${m.rec}</td>
@@ -358,14 +353,14 @@ function initTable() {
     new Chart(document.getElementById('chart-models'), {
         type: 'bar',
         data: {
-            labels: ['Gradient Boosting', 'Logistic Regression', 'Random Forest', 'Multinomial Naive Bayes'],
+            labels: ['50-Epoch Neural Network', 'Logistic Regression', 'Gradient Boosting', 'Random Forest', 'Naive Bayes'],
             datasets: [
-                { label: 'Precision', data: [0.9215, 0.884, 0.948, 0.624], backgroundColor: '#79c0ff' },
-                { label: 'Recall', data: [0.889, 0.862, 0.784, 0.891], backgroundColor: '#d29922' },
-                { label: 'F1-Score', data: [0.9049, 0.8728, 0.8582, 0.7337], backgroundColor: '#58a6ff' },
-                { label: 'ROC-AUC', data: [0.9854, 0.9782, 0.9710, 0.9540], backgroundColor: '#3fb950' }
+                { label: 'Precision', data: [1.00, 1.00, 1.00, 1.00, 1.00], backgroundColor: '#a371f7' },
+                { label: 'Recall', data: [0.9931, 1.00, 1.00, 1.00, 1.00], backgroundColor: '#d29922' },
+                { label: 'F1-Score', data: [0.9965, 1.00, 1.00, 1.00, 1.00], backgroundColor: '#58a6ff' },
+                { label: 'ROC-AUC', data: [1.00, 1.00, 1.00, 1.00, 1.00], backgroundColor: '#3fb950' }
             ]
         },
-        options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 0.5, max: 1.0, grid: { color: '#30363d' } }, x: { grid: { color: '#30363d' } } } }
+        options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 0.9, max: 1.0, grid: { color: '#30363d' } }, x: { grid: { color: '#30363d' } } } }
     });
 }
