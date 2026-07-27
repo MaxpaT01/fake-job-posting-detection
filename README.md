@@ -11,7 +11,7 @@ An end-to-end Machine Learning and Natural Language Processing (NLP) system desi
 
 ## 🌐 Live Working Application
 
-👉 **Try the Live Web App:** [https://nigam-singh.github.io/fake-job-posting-detection/](https://nigam-singh.github.io/fake-job-posting-detection/)
+👉 **Try the Live Web App:** [https://MaxpaT01.github.io/fake-job-posting-detection/](https://MaxpaT01.github.io/fake-job-posting-detection/)
 
 The web application features:
 - **Real-Time Job Posting Fraud Risk Classifier** (Input job details or load pre-set real vs scam job samples).
@@ -59,7 +59,7 @@ Evaluated on an independent 20% test split (Stratified):
 
 ---
 
-## 📁 Repository Structure
+## 📁 Repository Structure (Ordered Execution Sequence)
 
 ```
 fake-job-posting-detection/
@@ -69,13 +69,14 @@ fake-job-posting-detection/
 ├── requirements.txt            # Python Dependencies
 ├── generate_notebook.py        # Jupyter Notebook Generator Script
 ├── data/
-│   └── fake_job_postings.csv   # EMSCAD Benchmark Dataset
+│   └── 01_fake_job_postings.csv # EMSCAD Benchmark Dataset
 ├── src/
-│   ├── data_loader.py          # Data ingestion & synthetic EMSCAD generator
-│   ├── text_processor.py       # Text cleaning & TF-IDF feature pipeline
-│   ├── model_trainer.py        # Model training, tuning & metrics exporter
-│   ├── evaluation.py           # Preprocessing impact evaluation & ROC plots
-│   └── predict.py              # Single job posting inference pipeline
+│   ├── 01_data_loader.py       # Data ingestion & synthetic EMSCAD generator
+│   ├── 02_text_processor.py    # Text cleaning & TF-IDF feature pipeline
+│   ├── 03_model_trainer.py     # Model training, tuning & metrics exporter
+│   ├── 04_evaluation.py        # Preprocessing impact evaluation & ROC plots
+│   ├── 05_predict.py           # Single job posting inference pipeline
+│   └── 06_deploy_to_github.py  # Automated GitHub deployment script
 ├── notebooks/
 │   └── Fake_Job_Posting_Detection.ipynb  # End-to-end Jupyter Notebook
 └── outputs/
@@ -85,42 +86,31 @@ fake-job-posting-detection/
 
 ---
 
-## 💻 Quick Start & Local Execution
+## 💻 Quick Start & Sequential Execution
 
 ### 1. Clone & Set Up Environment
 ```bash
-git clone https://github.com/nigam-singh/fake-job-posting-detection.git
+git clone https://github.com/MaxpaT01/fake-job-posting-detection.git
 cd fake-job-posting-detection
 
-# Create and activate virtual environment
 python -m venv venv
-# On Windows:
+# Windows:
 .\venv\Scripts\activate
-# On Linux/macOS:
+# Linux/macOS:
 source venv/bin/activate
 
-# Install dependencies
 pip install -r requirements.txt
 ```
 
-### 2. Run Data Pipeline & Model Training
+### 2. Sequential Execution of Pipeline
 ```bash
-python src/model_trainer.py
-python src/evaluation.py
+python src/01_data_loader.py
+python src/02_text_processor.py
+python src/03_model_trainer.py
+python src/04_evaluation.py
+python src/05_predict.py
+python src/06_deploy_to_github.py
 ```
-
-### 3. Test Command-Line Prediction
-```bash
-python src/predict.py
-```
-
----
-
-## ⚠️ Real-World Deployment Limitations
-
-1. **Adversarial Adaptation:** Fraudulent networks constantly alter phrasing to circumvent static keyword rules.
-2. **Early-Stage Startups:** Legitimate new companies without established branding or logos may trigger false caution warnings.
-3. **Human-in-the-Loop:** Automated fraud scores should serve as a triaging system for human compliance review rather than executing outright post deletions.
 
 ---
 
