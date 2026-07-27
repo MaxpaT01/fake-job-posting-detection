@@ -29,12 +29,6 @@ Direct Dataset Access: https://github.com/MaxpaT01/fake-job-posting-detection/bl
 - Textual Attributes: `title`, `company_profile`, `description`, `requirements`, `benefits`
 - Structured Metadata: `telecommuting`, `has_company_logo`, `has_questions`, `employment_type`, `required_experience`, `required_education`, `industry`, `function`, `salary_range`
 
-### Preprocessing Steps
-1. Text Normalization: Stripped HTML tags, converted text to lowercase, removed non-alphabetical characters, and filtered out English stopwords.
-2. Feature Encoding: Combined textual fields into a unified document per posting and extracted 3,000 TF-IDF features spanning unigrams and bigrams.
-3. Missing Value Strategy: Missing text fields were assigned empty strings, and binary indicators were generated for missing company profiles (`missing_company_profile`) and missing salary information (`missing_salary`).
-4. Metadata Feature Scaling: Standardized numeric and binary metadata columns using StandardScaler, concatenating them with TF-IDF matrices to form a 924-dimensional feature matrix.
-
 ---
 
 ## Neural Network Training (50 Epochs Execution Log)
@@ -73,16 +67,6 @@ Evaluated on the 3,600 test instances:
 
 ---
 
-## Preprocessing Impact Analysis
-
-| Preprocessing Stage | F1-Score | ROC-AUC | Key Finding |
-| :--- | :---: | :---: | :--- |
-| Raw Text (No Processing) | 0.7420 | 0.8510 | Low baseline due to uncleaned HTML tags and boilerplate noise |
-| Cleaned NLP Text | 0.8650 | 0.9320 | F1-score improved by 12.3% after stopword removal and normalization |
-| Cleaned Text + Metadata Signals | 0.9240 | 0.9780 | Highest accuracy achieved by combining text TF-IDF with metadata flags |
-
----
-
 ## Repository File Structure
 
 ```text
@@ -94,8 +78,7 @@ fake-job-posting-detection/
 │   ├── 02_text_processor.py           # Text cleaning and TF-IDF feature pipeline
 │   ├── 03_model_trainer.py            # 50-epoch neural training and metric exporter
 │   ├── 04_evaluation.py               # Preprocessing impact evaluation script
-│   ├── 05_predict.py                  # Single job posting inference API
-│   └── 06_deploy_to_github.py         # Automated deployment script
+│   └── 05_predict.py                  # Single job posting inference API
 ├── notebooks/
 │   └── Fake_Job_Posting_Detection.ipynb  # Comprehensive Jupyter Notebook
 ├── outputs/
@@ -103,7 +86,7 @@ fake-job-posting-detection/
 │   ├── 50_epochs_loss_accuracy.png    # Convergence loss curve plot
 │   ├── model_comparison.json          # Metric comparison results
 │   └── preprocessing_impact.json      # Impact evaluation data
-├── index.html                         # VS Code Studio Web Interface
+├── index.html                         # GitHub Studio Web Interface
 ├── style.css                          # GitHub Dark Theme styling
 ├── app.js                             # Client-side inference and PDF export logic
 ├── requirements.txt                   # Required Python libraries
@@ -115,10 +98,6 @@ fake-job-posting-detection/
 ## Installation & Local Setup Instructions
 
 Follow these step-by-step instructions to run the project on your local machine.
-
-### Prerequisites
-- Python 3.10 or higher
-- Git
 
 ### Step 1: Clone the Repository
 ```bash
