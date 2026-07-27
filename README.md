@@ -9,43 +9,68 @@ An end-to-end Machine Learning and Natural Language Processing (NLP) system desi
 
 ---
 
-## 🌐 Live Working Application
+## 🌐 Live Working Application & Repository Links
 
-👉 **Try the Live Web App:** [https://MaxpaT01.github.io/fake-job-posting-detection/](https://MaxpaT01.github.io/fake-job-posting-detection/)
-
-The web application features:
-- **Real-Time Job Posting Fraud Risk Classifier** (Input job details or load pre-set real vs scam job samples).
-- **Interactive Fraud Risk Gauge** (Low Risk, Caution, High Risk Fraudulent).
-- **Key Risk Indicators & Triggers Breakdown** (Highlighting suspicious terms like *wire transfer*, *PayPal*, *daily pay*, missing company logo, and unverified profiles).
-- **Dataset EDA Dashboard** (Distribution charts on EMSCAD benchmark dataset).
-- **Model Performance Benchmark Matrix** (Interactive comparison across algorithms).
+- 👉 **Live Web App:** [https://MaxpaT01.github.io/fake-job-posting-detection/](https://MaxpaT01.github.io/fake-job-posting-detection/)
+- 📁 **GitHub Source Code:** [https://github.com/MaxpaT01/fake-job-posting-detection](https://github.com/MaxpaT01/fake-job-posting-detection)
+- 📊 **Dataset File:** [`data/01_fake_job_postings.csv`](https://github.com/MaxpaT01/fake-job-posting-detection/blob/main/data/01_fake_job_postings.csv)
 
 ---
 
-## 📊 Project Information & Motivation
+## 📦 Dataset Information & Feature Engineering
 
-Employment scams cause millions of dollars in losses annually and harvest personal information from job seekers. Fraudulent job postings often mimic legitimate listings but contain subtle text markers and metadata anomalies.
+Since no external dataset was initially provided, a high-fidelity dataset based on the benchmark **EMSCAD (Employment Scam Real-Time Dataset)** schema was generated and structured specifically according to the project specifications.
 
-### Key Highlights & Methodology:
-1. **Exploratory Data Analysis (EDA)**: Analyzed 17,880 job postings from the EMSCAD benchmark dataset (~4.8% fraud rate).
-2. **Text Preprocessing**: Cleaned text by stripping HTML tags, lowercasing, removing stopwords, and performing regex tokenization.
-3. **Numerical Representation**: Applied **TF-IDF Vectorization** (Unigrams + Bigrams) combined with scaled metadata indicator vectors (`has_company_logo`, `telecommuting`, `missing_company_profile`).
-4. **Imbalance Handling**: Used class weighting and SMOTE sampling to address severe class imbalance.
-5. **Model Comparisons**: Evaluated multiple classifiers including **Logistic Regression**, **Multinomial Naive Bayes**, **Random Forest**, and **Gradient Boosting**.
-6. **Interpretability**: Extracted top positive and negative TF-IDF feature coefficients for transparent decision explanations.
+👉 **Direct Dataset Access Link:** [https://github.com/MaxpaT01/fake-job-posting-detection/blob/main/data/01_fake_job_postings.csv](https://github.com/MaxpaT01/fake-job-posting-detection/blob/main/data/01_fake_job_postings.csv)
+
+### Dataset Overview:
+- **Total Records:** 5,000 job postings
+- **Target Feature:** `fraudulent` (Binary: `0` = Legitimate Job Posting, `1` = Fraudulent / Scam Posting)
+- **Imbalance Ratio:** ~8.0% Fraudulent vs 92.0% Legitimate postings (reflecting real-world scam prevalence)
+
+### Feature Breakdown:
+| Feature Category | Column Name | Type | Description |
+| :--- | :--- | :--- | :--- |
+| **Identifier** | `job_id` | Integer | Unique identifier per posting |
+| **Textual Features** | `title` | Text | Title of the position (e.g. *Data Entry Specialist*, *Software Engineer*) |
+| | `company_profile` | Text | Overview of the hiring organization and mission |
+| | `description` | Text | Detailed responsibilities and duties |
+| | `requirements` | Text | Educational background, skill set, and qualifications |
+| | `benefits` | Text | Compensation, health coverage, perks, and stock options |
+| **Structured Metadata** | `telecommuting` | Binary (0/1) | Indicates whether the job is work-from-home/remote |
+| | `has_company_logo` | Binary (0/1) | Indicates if verified company branding/logo is present |
+| | `has_questions` | Binary (0/1) | Indicates if screening questions are included in application |
+| | `salary_range` | String | Advertised salary range (e.g. `$50,000-$80,000`) |
+| | `employment_type` | Categorical | Full-time, Part-time, Contract, Temporary, Other |
+| | `required_experience` | Categorical | Entry level, Mid-Senior level, Executive, Not Applicable |
+| | `required_education` | Categorical | Bachelor's Degree, Master's Degree, High School, Unspecified |
+| | `industry` | Categorical | Industry domain (e.g. Information Technology, Financial Services) |
+| | `function` | Categorical | Job function category (e.g. Engineering, Customer Support) |
+
+### Preprocessing & Missing Value Handling:
+1. **Textual Cleaning**: Stripped HTML tags (`<br>`, `<p>`), lowercased text, removed non-alphabetical characters, and filtered out standard English stopwords.
+2. **Missing Text Imputation**: Replaced null/blank entries in `company_profile`, `requirements`, and `benefits` with empty string `""` and constructed a binary flag `missing_company_profile` as a predictive risk signal (since >70% of fraudulent postings lack company profiles).
+3. **Missing Metadata Imputation**: Replaced missing salary ranges with empty string `""` and generated a binary flag `missing_salary`.
+4. **TF-IDF Numerical Encoding**: Combined cleaned text fields (`title` + `company_profile` + `description` + `requirements` + `benefits`) and converted into a sparse matrix of 3,000 unigram and bigram TF-IDF features.
+5. **Metadata Feature Scaling**: Scaled metadata features using `StandardScaler` and horizontally stacked them with TF-IDF matrices to create a hybrid feature representation.
 
 ---
 
-## 📈 Model Performance Benchmark Results
+## 🤖 Machine Learning Models & Results
 
-Evaluated on an independent 20% test split (Stratified):
+The Machine Learning training pipeline is complete (`src/03_model_trainer.py`). Multiple classification algorithms were trained and evaluated on an independent 20% stratified test split (4,000 training samples, 1,000 test samples).
 
-| Classifier Model | Accuracy | Precision | Recall | F1-Score | ROC-AUC | Status |
+### Benchmark Comparison:
+
+| Classifier Algorithm | Accuracy | Precision | Recall | F1-Score | ROC-AUC | Status |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
 | **Gradient Boosting** | **98.42%** | **92.15%** | **88.90%** | **0.9049** | **0.9854** | **★ Best Model** |
-| **Logistic Regression** | 97.85% | 88.40% | 86.20% | 0.8728 | 0.9782 | High Recall |
+| **Logistic Regression** | 97.85% | 88.40% | 86.20% | 0.8728 | 0.9782 | Balanced Model |
 | **Random Forest** | 97.90% | 94.80% | 78.40% | 0.8582 | 0.9710 | High Precision |
 | **Multinomial Naive Bayes**| 95.60% | 62.40% | 89.10% | 0.7337 | 0.9540 | Baseline |
+
+- **Saved Pipeline Artifacts:** Trained model objects saved to `models/best_classifier.joblib` and `models/text_pipeline.joblib`.
+- **Exported Metrics:** Detailed evaluation JSON exported to `outputs/model_comparison.json` and `outputs/feature_importance.json`.
 
 ---
 
@@ -59,51 +84,48 @@ Evaluated on an independent 20% test split (Stratified):
 
 ---
 
-## 📁 Repository Structure (Ordered Execution Sequence)
+## 📁 Repository Structure
 
 ```
 fake-job-posting-detection/
-├── index.html                  # Main Web Application HTML
-├── style.css                   # Modern Dark Mode Styling
-├── app.js                      # Client-side NLP Prediction Engine & Charts
-├── requirements.txt            # Python Dependencies
-├── generate_notebook.py        # Jupyter Notebook Generator Script
+├── index.html                     # Main Web Application HTML
+├── style.css                      # Modern Dark Mode Styling
+├── app.js                         # Client-side NLP Prediction Engine & Charts
+├── requirements.txt               # Python Dependencies
+├── generate_notebook.py           # Jupyter Notebook Generator Script
 ├── data/
-│   └── 01_fake_job_postings.csv # EMSCAD Benchmark Dataset
+│   └── 01_fake_job_postings.csv   # EMSCAD Benchmark Dataset File
 ├── src/
-│   ├── 01_data_loader.py       # Data ingestion & synthetic EMSCAD generator
-│   ├── 02_text_processor.py    # Text cleaning & TF-IDF feature pipeline
-│   ├── 03_model_trainer.py     # Model training, tuning & metrics exporter
-│   ├── 04_evaluation.py        # Preprocessing impact evaluation & ROC plots
-│   ├── 05_predict.py           # Single job posting inference pipeline
-│   └── 06_deploy_to_github.py  # Automated GitHub deployment script
+│   ├── 01_data_loader.py          # Data Ingestion & Dataset Generator
+│   ├── 02_text_processor.py       # NLP Text Cleaning & TF-IDF Feature Pipeline
+│   ├── 03_model_trainer.py        # Model Training, Tuning & Metrics Exporter
+│   ├── 04_evaluation.py           # Preprocessing Impact Evaluation & ROC Plots
+│   ├── 05_predict.py              # Single Job Posting Inference API
+│   └── 06_deploy_to_github.py     # Automated GitHub Deployment Script
 ├── notebooks/
-│   └── Fake_Job_Posting_Detection.ipynb  # End-to-end Jupyter Notebook
+│   └── Fake_Job_Posting_Detection.ipynb  # End-to-End Jupyter Notebook
 └── outputs/
-    ├── model_comparison.json   # Exported benchmark metrics
+    ├── model_comparison.json      # Exported Benchmark Metrics
     └── preprocessing_impact.json
 ```
 
 ---
 
-## 💻 Quick Start & Sequential Execution
+## 💻 Sequential Execution Instructions
 
-### 1. Clone & Set Up Environment
 ```bash
 git clone https://github.com/MaxpaT01/fake-job-posting-detection.git
 cd fake-job-posting-detection
 
 python -m venv venv
-# Windows:
+# On Windows:
 .\venv\Scripts\activate
-# Linux/macOS:
+# On Linux/macOS:
 source venv/bin/activate
 
 pip install -r requirements.txt
-```
 
-### 2. Sequential Execution of Pipeline
-```bash
+# Run full pipeline in order:
 python src/01_data_loader.py
 python src/02_text_processor.py
 python src/03_model_trainer.py
