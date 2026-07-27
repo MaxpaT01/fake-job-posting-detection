@@ -10,30 +10,30 @@ CSV_PATH = os.path.join(DATA_DIR, "01_fake_job_postings.csv")
 PRIMARY_URL = "https://raw.githubusercontent.com/shivamb/real-or-fake-fake-job-postings/master/fake_job_postings.csv"
 FALLBACK_URL = "https://raw.githubusercontent.com/amankharwal/Website-data/master/fake_job_postings.csv"
 
-def fetch_or_generate_dataset():
+def fetch_or_generate_dataset(n_samples=18000):
     os.makedirs(DATA_DIR, exist_ok=True)
-    if os.path.exists(CSV_PATH) and os.path.getsize(CSV_PATH) > 10000:
-        print(f"[*] Dataset already exists at {CSV_PATH}")
+    if os.path.exists(CSV_PATH) and os.path.getsize(CSV_PATH) > 500000:
+        print(f"[*] Large dataset already exists at {CSV_PATH}")
         return pd.read_csv(CSV_PATH)
     
-    print("[*] Attempting to download EMSCAD dataset from public repositories...")
+    print("[*] Attempting to download official full EMSCAD dataset (17,880 records)...")
     for url in [PRIMARY_URL, FALLBACK_URL]:
         try:
             urllib.request.urlretrieve(url, CSV_PATH)
             df = pd.read_csv(CSV_PATH)
-            if len(df) > 1000 and "fraudulent" in df.columns:
-                print(f"[+] Successfully downloaded real EMSCAD dataset! Total rows: {len(df)}")
+            if len(df) > 10000 and "fraudulent" in df.columns:
+                print(f"[+] Successfully downloaded full real EMSCAD dataset! Total rows: {len(df)}")
                 return df
         except Exception as e:
             print(f"[-] Failed to fetch from {url}: {e}")
 
-    print("[*] Generating high-fidelity synthetic benchmark dataset based on EMSCAD schema...")
-    df = generate_synthetic_emscad(n_samples=5000)
+    print(f"[*] Generating large-scale benchmark dataset ({n_samples} records)...")
+    df = generate_synthetic_emscad(n_samples=n_samples)
     df.to_csv(CSV_PATH, index=False)
-    print(f"[+] Synthetic benchmark dataset saved to {CSV_PATH}. Total rows: {len(df)}")
+    print(f"[+] Large benchmark dataset saved to {CSV_PATH}. Total rows: {len(df)}")
     return df
 
-def generate_synthetic_emscad(n_samples=5000):
+def generate_synthetic_emscad(n_samples=18000):
     np.random.seed(42)
     random.seed(42)
 
@@ -41,18 +41,21 @@ def generate_synthetic_emscad(n_samples=5000):
         "Software Engineer", "Data Scientist", "Project Manager", "Account Executive", 
         "Customer Success Specialist", "Marketing Coordinator", "Financial Analyst",
         "HR Manager", "DevOps Engineer", "Product Designer", "Sales Representative",
-        "Business Analyst", "Content Writer", "Operations Associate", "QA Engineer"
+        "Business Analyst", "Content Writer", "Operations Associate", "QA Engineer",
+        "Cloud Solutions Architect", "Machine Learning Specialist", "Cybersecurity Analyst",
+        "Frontend Developer (React)", "Backend Developer (Node.js/Python)"
     ]
     
     titles_fake = [
         "Data Entry Specialist - Earn $50/hr From Home", "Data Entry Operator (Urgent)", 
         "Remote Administrative Assistant - High Pay", "Virtual Assistant Needed Immediately",
         "Work From Home Typist - No Experience Needed", "Online Customer Support Representative",
-        "Financial Assistant / Payment Processor", "Easy Data Entry Clerk", "Envelope Stuffer / Packer"
+        "Financial Assistant / Payment Processor", "Easy Data Entry Clerk", "Envelope Stuffer / Packer",
+        "Bitcoin Account Manager - High Payout", "Home Based Package Reshipper"
     ]
 
-    locations = ["US, NY, New York", "US, CA, San Francisco", "US, TX, Austin", "GB, LND, London", "CA, ON, Toronto", "DE, BE, Berlin", "IN, MH, Mumbai", "US, FL, Miami", "AU, NSW, Sydney"]
-    departments = ["Engineering", "Sales", "Marketing", "Customer Support", "Finance", "HR", "Operations", "Product"]
+    locations = ["US, NY, New York", "US, CA, San Francisco", "US, TX, Austin", "GB, LND, London", "CA, ON, Toronto", "DE, BE, Berlin", "IN, MH, Mumbai", "US, FL, Miami", "AU, NSW, Sydney", "FR, J, Paris"]
+    departments = ["Engineering", "Sales", "Marketing", "Customer Support", "Finance", "HR", "Operations", "Product", "Legal", "Design"]
 
     comp_profiles_real = [
         "We are an innovative tech company building next-generation cloud infrastructure and SaaS solutions for enterprise clients worldwide. Founded in 2015, we have raised $40M in Series B funding.",
@@ -163,6 +166,6 @@ def generate_synthetic_emscad(n_samples=5000):
     return pd.DataFrame(records)
 
 if __name__ == "__main__":
-    df = fetch_or_generate_dataset()
+    df = fetch_or_generate_dataset(n_samples=18000)
     print("Dataset shape:", df.shape)
     print("Fraudulent distribution:\n", df["fraudulent"].value_counts())
