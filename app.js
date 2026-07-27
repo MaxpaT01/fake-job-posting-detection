@@ -2,401 +2,380 @@ document.addEventListener('DOMContentLoaded', () => {
     // -------------------------------------------------------------
     // TAB NAVIGATION
     // -------------------------------------------------------------
-    const navButtons = document.querySelectorAll('.nav-btn');
+    const tabLinks = document.querySelectorAll('.tab-link');
     const tabPanes = document.querySelectorAll('.tab-pane');
 
-    navButtons.forEach(btn => {
+    tabLinks.forEach(btn => {
         btn.addEventListener('click', () => {
-            navButtons.forEach(b => b.classList.remove('active'));
+            tabLinks.forEach(b => b.classList.remove('active'));
             tabPanes.forEach(p => p.classList.remove('active'));
 
             btn.classList.add('active');
-            const targetTab = document.getElementById(btn.dataset.tab);
-            if (targetTab) targetTab.classList.add('active');
+            const target = document.getElementById(btn.dataset.tab);
+            if (target) target.classList.add('active');
         });
     });
 
     // -------------------------------------------------------------
-    // PRESET SAMPLE DATA
+    // PRESET SAMPLES
     // -------------------------------------------------------------
     const sampleReal = {
-        title: "Senior Full-Stack Software Engineer (Python & React)",
-        hasLogo: "1",
+        title: "Software Engineer (Python & React)",
+        has_company_logo: "1",
         telecommuting: "0",
-        hasQuestions: "1",
-        profile: "We are an innovative enterprise SaaS platform powering healthcare analytics for over 10 million patients. Founded in 2016, our engineering team values code quality, automated testing, and transparent collaboration.",
-        description: "We are seeking an experienced Senior Software Engineer to design, build, and maintain high-throughput REST APIs and reactive web interfaces. You will mentor junior engineers, lead architectural discussions, and optimize database queries for low latency.",
-        requirements: "Bachelor's degree in Computer Science or equivalent. 5+ years of experience with Python (Django/FastAPI) and modern JavaScript (React/TypeScript). Experience with PostgreSQL, Docker, and AWS CI/CD pipelines.",
-        benefits: "Competitive salary ($140,000 - $175,000) + 0.15% equity stock options. Full medical, dental, and vision coverage. 401(k) matching up to 5%. Unlimited PTO and $2,000 annual learning stipend."
+        has_questions: "1",
+        company_profile: "We are an innovative SaaS healthcare technology platform founded in 2016.",
+        description: "Looking for a Software Engineer to design, build, and maintain Python REST APIs and React web interfaces.",
+        requirements: "Bachelor's degree in Computer Science or related field. 3+ years experience with Python and JavaScript.",
+        benefits: "Competitive salary ($90,000 - $120,000) + stock options, health insurance, and 401(k) matching."
     };
 
     const sampleFake = {
-        title: "Remote Data Entry Clerk - Earn $50/hr (Urgent Hiring!)",
-        hasLogo: "0",
+        title: "Remote Data Entry Clerk - Urgent Hiring! ($50/hr)",
+        has_company_logo: "0",
         telecommuting: "1",
-        hasQuestions: "0",
-        profile: "", // Fake jobs often miss company profile
-        description: "Urgent opening for Work From Home Data Entry Assistant! Earn money easily entering numbers and customer details into online spreadsheet forms. Flexible working hours (2-3 hours daily). Payment issued daily via PayPal, Zelle, or Wire Transfer. No prior experience or technical skills required!",
-        requirements: "Must be 18+ years old with reliable internet access. Must possess active personal bank account for receiving direct deposit payouts. Contact hiring manager directly via Telegram or WhatsApp.",
-        benefits: "High daily payouts! Earn up to $500 per day. Work from home at your own convenience. Instant payment upon task completion."
+        has_questions: "0",
+        company_profile: "", // Missing company profile
+        description: "Earn money easily working from home entering order data! Flexible 2 hours daily. Instant daily payment via PayPal, Zelle, or Wire Transfer. No experience required!",
+        requirements: "Must have computer with internet connection and active personal bank account. Contact manager via Telegram.",
+        benefits: "High daily payouts up to $500/day. Immediate payment upon task completion."
     };
 
-    document.getElementById('btn-sample-real').addEventListener('click', () => populateForm(sampleReal));
-    document.getElementById('btn-sample-fake').addEventListener('click', () => populateForm(sampleFake));
+    document.getElementById('btn-load-real').addEventListener('click', () => loadSample(sampleReal));
+    document.getElementById('btn-load-fake').addEventListener('click', () => loadSample(sampleFake));
 
-    function populateForm(data) {
-        document.getElementById('job-title').value = data.title;
-        document.getElementById('has-logo').value = data.hasLogo;
+    function loadSample(data) {
+        document.getElementById('title').value = data.title;
+        document.getElementById('has_company_logo').value = data.has_company_logo;
         document.getElementById('telecommuting').value = data.telecommuting;
-        document.getElementById('has-questions').value = data.hasQuestions;
-        document.getElementById('company-profile').value = data.profile;
-        document.getElementById('job-description').value = data.description;
-        document.getElementById('job-requirements').value = data.requirements;
-        document.getElementById('job-benefits').value = data.benefits;
+        document.getElementById('has_questions').value = data.has_questions;
+        document.getElementById('company_profile').value = data.company_profile;
+        document.getElementById('description').value = data.description;
+        document.getElementById('requirements').value = data.requirements;
+        document.getElementById('benefits').value = data.benefits;
     }
 
     // -------------------------------------------------------------
-    // SPAM KEYWORDS & RULE-BASED SCORING ENGINE
+    // PREDICTION LOGIC & SPAM PATTERN RULES
     // -------------------------------------------------------------
-    const SPAM_TRIGGERS = [
-        { word: "earn", weight: 0.12, name: "Promotional Earning Claims" },
-        { word: "paypal", weight: 0.20, name: "Unstandard Payment Method (PayPal)" },
-        { word: "zelle", weight: 0.25, name: "Peer-to-Peer Payment Signal (Zelle)" },
-        { word: "wire transfer", weight: 0.30, name: "High-Risk Wire Transfer Mention" },
-        { word: "telegram", weight: 0.25, name: "Off-Platform Communication (Telegram)" },
-        { word: "whatsapp", weight: 0.22, name: "Off-Platform Communication (WhatsApp)" },
-        { word: "daily pay", weight: 0.18, name: "Daily Payout Promise" },
-        { word: "daily payment", weight: 0.18, name: "Daily Payout Promise" },
-        { word: "no experience", weight: 0.15, name: "No Experience Required High-Pay Signal" },
-        { word: "urgent hiring", weight: 0.12, name: "Urgency Pressure Language" },
-        { word: "work from home", weight: 0.08, name: "Aggressive Remote Pitch" },
-        { word: "envelope", weight: 0.25, name: "Classic Envelope Packing Scam Keyword" },
-        { word: "bank account", weight: 0.15, name: "Personal Bank Account Request" },
-        { word: "cashier check", weight: 0.30, name: "Fraudulent Check Signal" },
-        { word: "crypto", weight: 0.20, name: "Cryptocurrency Payout Signal" }
+    const SPAM_RULES = [
+        { word: "earn", weight: 0.12, label: "Promotional Earning Claims" },
+        { word: "paypal", weight: 0.20, label: "Unstandard Payment Method (PayPal)" },
+        { word: "zelle", weight: 0.25, label: "Peer-to-Peer Payment Signal (Zelle)" },
+        { word: "wire transfer", weight: 0.30, label: "High-Risk Wire Transfer Mention" },
+        { word: "telegram", weight: 0.25, label: "Off-Platform Messaging (Telegram)" },
+        { word: "whatsapp", weight: 0.22, label: "Off-Platform Messaging (WhatsApp)" },
+        { word: "daily pay", weight: 0.18, label: "Daily Payout Guarantee" },
+        { word: "daily payment", weight: 0.18, label: "Daily Payout Guarantee" },
+        { word: "no experience", weight: 0.15, label: "No Experience Needed High-Pay Signal" },
+        { word: "urgent hiring", weight: 0.12, label: "Urgency Pressure Phrasing" },
+        { word: "envelope", weight: 0.25, label: "Envelope Packing Scam Keyword" },
+        { word: "bank account", weight: 0.15, label: "Personal Bank Account Request" }
     ];
 
-    const LEGIT_TRIGGERS = [
+    const LEGIT_RULES = [
         { word: "bachelor", weight: -0.10 },
-        { word: "master", weight: -0.12 },
-        { word: "years of experience", weight: -0.15 },
+        { word: "years experience", weight: -0.12 },
         { word: "python", weight: -0.10 },
         { word: "react", weight: -0.10 },
-        { word: "responsibilities", weight: -0.08 },
-        { word: "equity", weight: -0.12 },
-        { word: "pto", weight: -0.10 },
         { word: "health insurance", weight: -0.12 },
-        { word: "full-time", weight: -0.10 }
+        { word: "stock options", weight: -0.10 }
     ];
 
-    // Form Submit Handler
-    const jobForm = document.getElementById('job-form');
-    jobForm.addEventListener('submit', (e) => {
+    let currentAnalysisResult = null;
+
+    const predictForm = document.getElementById('predict-form');
+    predictForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        analyzeJobPosting();
+        runPrediction();
     });
 
-    function analyzeJobPosting() {
-        const title = document.getElementById('job-title').value;
-        const hasLogo = parseInt(document.getElementById('has-logo').value);
-        const telecommuting = parseInt(document.getElementById('telecommuting').value);
-        const hasQuestions = parseInt(document.getElementById('has-questions').value);
-        const profile = document.getElementById('company-profile').value;
-        const description = document.getElementById('job-description').value;
-        const requirements = document.getElementById('job-requirements').value;
-        const benefits = document.getElementById('job-benefits').value;
+    function runPrediction() {
+        const title = document.getElementById('title').value;
+        const logo = parseInt(document.getElementById('has_company_logo').value);
+        const tele = parseInt(document.getElementById('telecommuting').value);
+        const questions = parseInt(document.getElementById('has_questions').value);
+        const profile = document.getElementById('company_profile').value;
+        const desc = document.getElementById('description').value;
+        const req = document.getElementById('requirements').value;
+        const ben = document.getElementById('benefits').value;
 
-        const fullText = (title + " " + profile + " " + description + " " + requirements + " " + benefits).toLowerCase();
+        const fullText = (title + " " + profile + " " + desc + " " + req + " " + ben).toLowerCase();
 
-        let baseScore = 0.05; // Baseline prior fraud probability (~5%)
-        let triggersFound = [];
-        let featureBadges = [];
+        let score = 0.05; // Base fraud prior (~5%)
+        let triggers = [];
+        let tags = [];
 
-        // 1. Text Keyword Analysis
-        SPAM_TRIGGERS.forEach(item => {
-            if (fullText.includes(item.word)) {
-                baseScore += item.weight;
-                triggersFound.push({
-                    type: "high",
-                    msg: `Detected high-risk term: "${item.word}" (${item.name})`
-                });
-                featureBadges.push({ word: item.word, type: "spam" });
+        // Text Rule Check
+        SPAM_RULES.forEach(r => {
+            if (fullText.includes(r.word)) {
+                score += r.weight;
+                triggers.push({ type: "high", text: `Detected term: "${r.word}" (${r.label})` });
+                tags.push({ word: r.word, type: "spam" });
             }
         });
 
-        LEGIT_TRIGGERS.forEach(item => {
-            if (fullText.includes(item.word)) {
-                baseScore += item.weight; // weight is negative
-                featureBadges.push({ word: item.word, type: "legit" });
+        LEGIT_RULES.forEach(r => {
+            if (fullText.includes(r.word)) {
+                score += r.weight;
+                tags.push({ word: r.word, type: "legit" });
             }
         });
 
-        // 2. Metadata Signals
-        if (hasLogo === 0) {
-            baseScore += 0.22;
-            triggersFound.push({
-                type: "medium",
-                msg: "Missing Company Logo: Fraud rate is 3.5x higher in posts without branding."
-            });
+        // Metadata Signals
+        if (logo === 0) {
+            score += 0.22;
+            triggers.push({ type: "med", text: "Missing Company Logo: Fraud rate is 3.5x higher without corporate logo." });
         } else {
-            triggersFound.push({
-                type: "good",
-                msg: "Verified Company Logo Present"
-            });
+            triggers.push({ type: "good", text: "Verified Company Logo Present" });
         }
 
-        if (hasQuestions === 0) {
-            baseScore += 0.12;
-            triggersFound.push({
-                type: "medium",
-                msg: "No Screening Questions: Scam posts rarely include applicant qualification questions."
-            });
+        if (questions === 0) {
+            score += 0.12;
+            triggers.push({ type: "med", text: "No Screening Questions: Scam posts rarely include qualification questions." });
         }
 
         if (profile.trim().length === 0) {
-            baseScore += 0.25;
-            triggersFound.push({
-                type: "high",
-                msg: "Missing Company Profile: Over 70% of fraudulent job postings leave company profile blank."
-            });
+            score += 0.25;
+            triggers.push({ type: "high", text: "Missing Company Profile: Over 70% of fraudulent listings omit company background." });
         }
 
-        if (telecommuting === 1 && (fullText.includes("data entry") || fullText.includes("assistant") || fullText.includes("typist"))) {
-            baseScore += 0.18;
-            triggersFound.push({
-                type: "high",
-                msg: "Remote Work + Unskilled Role: Combination frequently targeted by phishing networks."
-            });
-        }
+        let finalScore = Math.min(Math.max(score, 0.01), 0.99);
+        let scorePct = Math.round(finalScore * 100);
 
-        // Clamp fraud score between 0.01 and 0.99
-        let finalScore = Math.min(Math.max(baseScore, 0.01), 0.99);
-        let scorePercent = Math.round(finalScore * 100);
+        currentAnalysisResult = {
+            title: title,
+            scorePct: scorePct,
+            triggers: triggers,
+            tags: tags
+        };
 
-        renderResults(scorePercent, triggersFound, featureBadges);
+        renderResult(scorePct, triggers, tags);
     }
 
-    function renderResults(scorePercent, triggers, featureBadges) {
-        document.getElementById('empty-state').classList.add('hidden');
-        const resultContent = document.getElementById('result-content');
-        resultContent.classList.remove('hidden');
+    function renderResult(scorePct, triggers, tags) {
+        document.getElementById('no-result').classList.add('hidden');
+        document.getElementById('result-box').classList.remove('hidden');
+        document.getElementById('btn-download-pdf').classList.remove('hidden');
 
-        document.getElementById('analysis-timestamp').textContent = new Date().toLocaleTimeString();
-
-        // Update score text
-        document.getElementById('fraud-score-val').textContent = `${scorePercent}%`;
-
-        // Update Gauge Conic Gradient
-        const gaugeRing = document.getElementById('gauge-ring');
-        let color = '#10b981'; // Green
-        let riskClass = 'legitimate';
-        let riskText = 'Legitimate Job Posting';
-
-        if (scorePercent >= 65) {
-            color = '#ef4444'; // Red
-            riskClass = 'fraudulent';
-            riskText = 'High Risk Fraudulent';
-        } else if (scorePercent >= 35) {
-            color = '#f59e0b'; // Yellow
-            riskClass = 'caution';
-            riskText = 'Suspicious / Caution';
-        }
-
-        gaugeRing.style.background = `conic-gradient(${color} ${scorePercent * 3.6}deg, #263354 0deg)`;
+        document.getElementById('score-text').textContent = `${scorePct}%`;
 
         const badge = document.getElementById('risk-badge');
-        badge.className = `risk-badge ${riskClass}`;
-        badge.textContent = riskText;
+        let badgeClass = 'real';
+        let badgeText = 'Legitimate Posting';
+
+        if (scorePct >= 65) {
+            badgeClass = 'fake';
+            badgeText = 'High Risk Fraudulent';
+        } else if (scorePct >= 35) {
+            badgeClass = 'caution';
+            badgeText = 'Suspicious Caution';
+        }
+
+        badge.className = `badge ${badgeClass}`;
+        badge.textContent = badgeText;
 
         // Triggers List
-        const triggersContainer = document.getElementById('triggers-list');
-        triggersContainer.innerHTML = '';
+        const ul = document.getElementById('triggers-list');
+        ul.innerHTML = '';
         if (triggers.length === 0) {
-            triggersContainer.innerHTML = '<div class="trigger-item good">✓ Clean text and verified company metadata.</div>';
+            ul.innerHTML = '<li class="good">✓ Standard text and verified company metadata.</li>';
         } else {
             triggers.forEach(t => {
-                const item = document.createElement('div');
-                item.className = `trigger-item ${t.type}`;
-                item.innerHTML = `<span>${t.type === 'good' ? '✓' : '⚠️'}</span> <span>${t.msg}</span>`;
-                triggersContainer.appendChild(item);
+                const li = document.createElement('li');
+                li.className = t.type;
+                li.textContent = (t.type === 'good' ? '✓ ' : '⚠️ ') + t.text;
+                ul.appendChild(li);
             });
         }
 
-        // Keywords Cloud
-        const cloud = document.getElementById('keywords-cloud');
-        cloud.innerHTML = '';
-        if (featureBadges.length === 0) {
-            cloud.innerHTML = '<span style="font-size:0.8rem; color:#9ca3af;">Standard corporate terminology detected.</span>';
+        // Keywords Tags
+        const tagsBox = document.getElementById('keywords-tags');
+        tagsBox.innerHTML = '';
+        if (tags.length === 0) {
+            tagsBox.innerHTML = '<span style="font-size:0.8rem; color:#64748b;">Standard terminology.</span>';
         } else {
-            featureBadges.forEach(b => {
-                const tag = document.createElement('span');
-                tag.className = `kw-tag ${b.type}`;
-                tag.textContent = (b.type === 'spam' ? '🚨 ' : '✓ ') + b.word;
-                cloud.appendChild(tag);
+            tags.forEach(tg => {
+                const span = document.createElement('span');
+                span.className = `tag ${tg.type}`;
+                span.textContent = (tg.type === 'spam' ? '🚨 ' : '✓ ') + tg.word;
+                tagsBox.appendChild(span);
             });
         }
 
-        // Recommendation
-        const recBox = document.getElementById('recommendation-box');
-        if (scorePercent >= 65) {
-            recBox.style.borderColor = 'rgba(239,68,68,0.5)';
-            recBox.innerHTML = `
-                <strong style="color: #ef4444;">Recommendation: DO NOT APPLY</strong>
-                <p style="margin-top:0.3rem; color:#9ca3af;">This job posting exhibits major red flags associated with wire transfer / payment processing recruitment scams. Never share personal banking details or communicate via unverified messaging apps.</p>
-            `;
-        } else if (scorePercent >= 35) {
-            recBox.style.borderColor = 'rgba(245,158,11,0.5)';
-            recBox.innerHTML = `
-                <strong style="color: #f59e0b;">Recommendation: VERIFY COMPANY BEFORE APPLYING</strong>
-                <p style="margin-top:0.3rem; color:#9ca3af;">Some suspicious features or missing metadata were detected. Verify the employer on LinkedIn or official corporate website domain before submitting personal information.</p>
-            `;
+        // Advice Box
+        const advice = document.getElementById('advice-box');
+        if (scorePct >= 65) {
+            advice.innerHTML = '<strong style="color:#dc2626;">Recommendation: DO NOT APPLY</strong><br>Contains major red flags associated with payment recruitment scams.';
+        } else if (scorePct >= 35) {
+            advice.innerHTML = '<strong style="color:#b45309;">Recommendation: VERIFY COMPANY BEFORE APPLYING</strong><br>Some metadata signals or suspicious keywords were found.';
         } else {
-            recBox.style.borderColor = 'rgba(16,185,129,0.5)';
-            recBox.innerHTML = `
-                <strong style="color: #10b981;">Recommendation: SAFE TO APPLY</strong>
-                <p style="margin-top:0.3rem; color:#9ca3af;">This posting matches standard corporate job patterns with complete text descriptions and verified logo metadata.</p>
-            `;
+            advice.innerHTML = '<strong style="color:#16a34a;">Recommendation: SAFE TO APPLY</strong><br>Posting matches legitimate corporate hiring patterns.';
         }
     }
 
     // -------------------------------------------------------------
-    // INITIALIZE CHARTS & BENCHMARKS
+    // PDF DOWNLOAD HANDLER
     // -------------------------------------------------------------
-    initEDACharts();
-    initBenchmarkTable();
-});
+    document.getElementById('btn-download-pdf').addEventListener('click', () => {
+        if (!currentAnalysisResult) return;
 
-function initEDACharts() {
-    Chart.defaults.color = '#9ca3af';
-    Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+        const pdfElement = document.createElement('div');
+        pdfElement.style.padding = '25px';
+        pdfElement.style.fontFamily = 'Helvetica, Arial, sans-serif';
+        pdfElement.style.color = '#1e293b';
 
-    // 1. Target Class Distribution
-    new Chart(document.getElementById('chart-class-dist'), {
-        type: 'doughnut',
-        data: {
-            labels: ['Legitimate (95.2%)', 'Fraudulent (4.8%)'],
-            datasets: [{
-                data: [17014, 866],
-                backgroundColor: ['#6366f1', '#ef4444'],
-                borderWidth: 0
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { position: 'bottom' } }
-        }
+        let riskStatus = currentAnalysisResult.scorePct >= 65 ? "HIGH RISK FRAUDULENT" : (currentAnalysisResult.scorePct >= 35 ? "SUSPICIOUS CAUTION" : "LEGITIMATE");
+        let statusColor = currentAnalysisResult.scorePct >= 65 ? "#dc2626" : (currentAnalysisResult.scorePct >= 35 ? "#b45309" : "#16a34a");
+
+        let triggersHtml = currentAnalysisResult.triggers.map(t => `<li style="margin-bottom:6px; font-size:13px;">${t.text}</li>`).join('');
+
+        pdfElement.innerHTML = `
+            <div style="border-bottom: 2px solid #2563eb; padding-bottom: 12px; margin-bottom: 20px;">
+                <h2 style="color: #1e293b; margin: 0; font-size: 22px;">Job Posting Fraud Risk Report</h2>
+                <p style="color: #64748b; font-size: 12px; margin: 4px 0 0 0;">Generated by JobShield AI • Machine Learning Internship Project</p>
+            </div>
+
+            <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 15px; margin-bottom: 20px;">
+                <p style="margin: 0 0 8px 0; font-size: 14px;"><strong>Job Title Evaluated:</strong> ${currentAnalysisResult.title}</p>
+                <p style="margin: 0 0 8px 0; font-size: 14px;"><strong>Fraud Risk Score:</strong> <span style="font-size: 18px; font-weight: bold; color: ${statusColor};">${currentAnalysisResult.scorePct}%</span></p>
+                <p style="margin: 0; font-size: 14px;"><strong>Risk Category:</strong> <strong style="color: ${statusColor};">${riskStatus}</strong></p>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <h4 style="font-size: 14px; margin-bottom: 8px; color: #334155;">Key Risk Indicators & Triggers:</h4>
+                <ul style="padding-left: 20px; margin: 0;">
+                    ${triggersHtml || '<li>No suspicious triggers detected.</li>'}
+                </ul>
+            </div>
+
+            <div style="background: #f1f5f9; border-left: 4px solid ${statusColor}; padding: 12px; font-size: 13px; margin-top: 25px;">
+                <strong>Evaluation Summary & Guidance:</strong><br>
+                ${currentAnalysisResult.scorePct >= 65 ? "Do not submit personal banking details or communicate off-platform." : "Verify employer domain on official channels before submitting credentials."}
+            </div>
+
+            <div style="margin-top: 40px; border-top: 1px solid #e2e8f0; pt-10px; font-size: 10px; color: #94a3b8; text-align: center;">
+                Fake Job Posting Detection System • Final Machine Learning Project Report
+            </div>
+        `;
+
+        const opt = {
+            margin:       10,
+            filename:     `Job_Posting_Fraud_Report_${Date.now()}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2 },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        html2pdf().set(opt).from(pdfElement).save();
     });
 
-    // 2. Company Logo Distribution
-    new Chart(document.getElementById('chart-logo-dist'), {
+    // -------------------------------------------------------------
+    // CHARTS & BENCHMARKS
+    // -------------------------------------------------------------
+    initCharts();
+    initTable();
+});
+
+function initCharts() {
+    Chart.defaults.font.family = "'Inter', sans-serif";
+    Chart.defaults.color = '#64748b';
+
+    // 1. Target Class
+    new Chart(document.getElementById('chart-class'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Legitimate (92.0%)', 'Fraudulent (8.0%)'],
+            datasets: [{ data: [4600, 400], backgroundColor: ['#2563eb', '#dc2626'] }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+    });
+
+    // 2. Company Logo Rate
+    new Chart(document.getElementById('chart-logo'), {
         type: 'bar',
         data: {
             labels: ['Legitimate Jobs', 'Fraudulent Jobs'],
             datasets: [
-                { label: 'Has Company Logo (%)', data: [84.2, 23.5], backgroundColor: '#10b981' },
-                { label: 'Missing Logo (%)', data: [15.8, 76.5], backgroundColor: '#ef4444' }
+                { label: 'Has Company Logo (%)', data: [84.2, 23.5], backgroundColor: '#16a34a' },
+                { label: 'Missing Logo (%)', data: [15.8, 76.5], backgroundColor: '#dc2626' }
             ]
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: { y: { beginAtZero: true, max: 100 } }
-        }
+        options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100 } } }
     });
 
     // 3. Telecommuting Fraud Correlation
-    new Chart(document.getElementById('chart-tele-dist'), {
+    new Chart(document.getElementById('chart-tele'), {
         type: 'bar',
         data: {
-            labels: ['On-Site / Office Jobs', 'Telecommuting / Remote Jobs'],
-            datasets: [
-                { label: 'Fraud Rate (%)', data: [3.1, 14.8], backgroundColor: ['#6366f1', '#f59e0b'] }
-            ]
+            labels: ['On-Site Jobs', 'Remote Jobs'],
+            datasets: [{ label: 'Fraud Rate (%)', data: [3.1, 14.8], backgroundColor: ['#2563eb', '#d97706'] }]
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: { y: { beginAtZero: true, max: 20 } }
-        }
+        options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 20 } } }
     });
 
-    // 4. Screening Questions Distribution
-    new Chart(document.getElementById('chart-questions-dist'), {
+    // 4. Screening Questions Rate
+    new Chart(document.getElementById('chart-questions'), {
         type: 'bar',
         data: {
             labels: ['Legitimate Jobs', 'Fraudulent Jobs'],
             datasets: [
-                { label: 'Has Screening Questions (%)', data: [68.5, 21.0], backgroundColor: '#6366f1' },
-                { label: 'No Questions (%)', data: [31.5, 79.0], backgroundColor: '#3b82f6' }
+                { label: 'Has Questions (%)', data: [68.5, 21.0], backgroundColor: '#2563eb' },
+                { label: 'No Questions (%)', data: [31.5, 79.0], backgroundColor: '#94a3b8' }
             ]
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: { y: { beginAtZero: true, max: 100 } }
-        }
+        options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100 } } }
     });
 
     // 5. Preprocessing Impact Chart
-    new Chart(document.getElementById('chart-preprocessing-impact'), {
+    new Chart(document.getElementById('chart-impact'), {
         type: 'bar',
         data: {
             labels: ['Raw Text', 'Cleaned Text', 'Cleaned Text + Metadata'],
             datasets: [
-                { label: 'F1-Score', data: [0.742, 0.865, 0.924], backgroundColor: '#6366f1' },
-                { label: 'ROC-AUC', data: [0.851, 0.932, 0.978], backgroundColor: '#10b981' }
+                { label: 'F1-Score', data: [0.742, 0.865, 0.924], backgroundColor: '#2563eb' },
+                { label: 'ROC-AUC', data: [0.851, 0.932, 0.978], backgroundColor: '#16a34a' }
             ]
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: { y: { min: 0.6, max: 1.0 } }
-        }
+        options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 0.5, max: 1.0 } } }
     });
 }
 
-function initBenchmarkTable() {
+function initTable() {
     const modelsData = [
-        { name: "Logistic Regression", acc: "97.85%", prec: "88.40%", rec: "86.20%", f1: "0.8728", auc: "0.9782", best: false },
-        { name: "Gradient Boosting", acc: "98.42%", prec: "92.15%", rec: "88.90%", f1: "0.9049", auc: "0.9854", best: true },
-        { name: "Random Forest Classifier", acc: "97.90%", prec: "94.80%", rec: "78.40%", f1: "0.8582", auc: "0.9710", best: false },
-        { name: "Multinomial Naive Bayes", acc: "95.60%", prec: "62.40%", rec: "89.10%", f1: "0.7337", auc: "0.9540", best: false }
+        { name: "Gradient Boosting", acc: "98.42%", prec: "92.15%", rec: "88.90%", f1: "0.9049", auc: "0.9854", note: "Best Model" },
+        { name: "Logistic Regression", acc: "97.85%", prec: "88.40%", rec: "86.20%", f1: "0.8728", auc: "0.9782", note: "High Recall" },
+        { name: "Random Forest", acc: "97.90%", prec: "94.80%", rec: "78.40%", f1: "0.8582", auc: "0.9710", note: "High Precision" },
+        { name: "Multinomial Naive Bayes", acc: "95.60%", prec: "62.40%", rec: "89.10%", f1: "0.7337", auc: "0.9540", note: "Baseline" }
     ];
 
-    const tbody = document.getElementById('benchmark-table-body');
+    const tbody = document.getElementById('models-table-body');
     tbody.innerHTML = '';
 
     modelsData.forEach(m => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td><strong>${m.name}</strong></td>
+            <td><strong>${m.name}</strong> (${m.note})</td>
             <td>${m.acc}</td>
             <td>${m.prec}</td>
             <td>${m.rec}</td>
             <td><strong>${m.f1}</strong></td>
             <td>${m.auc}</td>
-            <td>${m.best ? '<span class="status-badge best">★ Best Model</span>' : '<span style="color:#9ca3af;">Evaluated</span>'}</td>
         `;
         tbody.appendChild(tr);
     });
 
-    // Multi-metric comparison chart
-    new Chart(document.getElementById('chart-models-compare'), {
+    new Chart(document.getElementById('chart-models'), {
         type: 'bar',
         data: {
-            labels: ['Logistic Regression', 'Gradient Boosting', 'Random Forest', 'Multinomial Naive Bayes'],
+            labels: ['Gradient Boosting', 'Logistic Regression', 'Random Forest', 'Multinomial Naive Bayes'],
             datasets: [
-                { label: 'Precision', data: [0.884, 0.9215, 0.948, 0.624], backgroundColor: '#3b82f6' },
-                { label: 'Recall', data: [0.862, 0.889, 0.784, 0.891], backgroundColor: '#f59e0b' },
-                { label: 'F1-Score', data: [0.8728, 0.9049, 0.8582, 0.7337], backgroundColor: '#6366f1' },
-                { label: 'ROC-AUC', data: [0.9782, 0.9854, 0.9710, 0.9540], backgroundColor: '#10b981' }
+                { label: 'Precision', data: [0.9215, 0.884, 0.948, 0.624], backgroundColor: '#3b82f6' },
+                { label: 'Recall', data: [0.889, 0.862, 0.784, 0.891], backgroundColor: '#d97706' },
+                { label: 'F1-Score', data: [0.9049, 0.8728, 0.8582, 0.7337], backgroundColor: '#2563eb' },
+                { label: 'ROC-AUC', data: [0.9854, 0.9782, 0.9710, 0.9540], backgroundColor: '#16a34a' }
             ]
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: { y: { min: 0.5, max: 1.0 } }
-        }
+        options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 0.5, max: 1.0 } } }
     });
 }
