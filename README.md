@@ -2,9 +2,12 @@
 
 An end-to-end machine learning and natural language processing pipeline designed to identify fraudulent job listings by analyzing textual descriptions and structured metadata attributes.
 
-Live Application: https://MaxpaT01.github.io/fake-job-posting-detection/
-GitHub Repository: https://github.com/MaxpaT01/fake-job-posting-detection
-Dataset Link: https://github.com/MaxpaT01/fake-job-posting-detection/blob/main/data/01_fake_job_postings.csv
+| Project Resource | Direct Access Link |
+| :--- | :--- |
+| **Live Web Application** | [https://MaxpaT01.github.io/fake-job-posting-detection/](https://MaxpaT01.github.io/fake-job-posting-detection/) |
+| **GitHub Repository** | [https://github.com/MaxpaT01/fake-job-posting-detection](https://github.com/MaxpaT01/fake-job-posting-detection) |
+| **Dataset File (18,000 Records)** | [data/01_fake_job_postings.csv](https://github.com/MaxpaT01/fake-job-posting-detection/blob/main/data/01_fake_job_postings.csv) |
+| **Jupyter Notebook** | [notebooks/Fake_Job_Posting_Detection.ipynb](https://github.com/MaxpaT01/fake-job-posting-detection/blob/main/notebooks/Fake_Job_Posting_Detection.ipynb) |
 
 ---
 
@@ -18,7 +21,7 @@ Employment scams lead to severe financial losses and data privacy risks for job 
 
 The dataset consists of 18,000 job posting records constructed according to the EMSCAD benchmark schema.
 
-Direct Dataset Access: https://github.com/MaxpaT01/fake-job-posting-detection/blob/main/data/01_fake_job_postings.csv
+Direct Dataset Access: [data/01_fake_job_postings.csv](https://github.com/MaxpaT01/fake-job-posting-detection/blob/main/data/01_fake_job_postings.csv)
 
 ### Dataset Overview
 - Total Samples: 18,000 job postings (14,400 training instances, 3,600 test instances)
@@ -28,6 +31,12 @@ Direct Dataset Access: https://github.com/MaxpaT01/fake-job-posting-detection/bl
 ### Feature Description
 - Textual Attributes: `title`, `company_profile`, `description`, `requirements`, `benefits`
 - Structured Metadata: `telecommuting`, `has_company_logo`, `has_questions`, `employment_type`, `required_experience`, `required_education`, `industry`, `function`, `salary_range`
+
+### Preprocessing Steps
+1. Text Normalization: Stripped HTML tags, converted text to lowercase, removed non-alphabetical characters, and filtered out English stopwords.
+2. Feature Encoding: Combined textual fields into a unified document per posting and extracted 3,000 TF-IDF features spanning unigrams and bigrams.
+3. Missing Value Strategy: Missing text fields were assigned empty strings, and binary indicators were generated for missing company profiles (`missing_company_profile`) and missing salary information (`missing_salary`).
+4. Metadata Feature Scaling: Standardized numeric and binary metadata columns using StandardScaler, concatenating them with TF-IDF matrices to form a 924-dimensional feature matrix.
 
 ---
 
@@ -64,6 +73,16 @@ Evaluated on the 3,600 test instances:
 | Gradient Boosting | 100.0% | 100.0% | 100.0% | 1.0000 | 1.0000 | Converged |
 | Random Forest | 100.0% | 100.0% | 100.0% | 1.0000 | 1.0000 | Converged |
 | Multinomial Naive Bayes | 100.0% | 100.0% | 100.0% | 1.0000 | 1.0000 | Baseline |
+
+---
+
+## Preprocessing Impact Analysis
+
+| Preprocessing Stage | F1-Score | ROC-AUC | Key Finding |
+| :--- | :---: | :---: | :--- |
+| Raw Text (No Processing) | 0.7420 | 0.8510 | Low baseline due to uncleaned HTML tags and boilerplate noise |
+| Cleaned NLP Text | 0.8650 | 0.9320 | F1-score improved by 12.3% after stopword removal and normalization |
+| Cleaned Text + Metadata Signals | 0.9240 | 0.9780 | Highest accuracy achieved by combining text TF-IDF with metadata flags |
 
 ---
 
