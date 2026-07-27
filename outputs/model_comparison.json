@@ -1,0 +1,87 @@
+{
+  "50-Epoch Neural Network": {
+    "accuracy": 0.9994,
+    "precision": 1.0,
+    "recall": 0.9931,
+    "f1_score": 0.9965,
+    "roc_auc": 1.0,
+    "confusion_matrix": [
+      [
+        3312,
+        0
+      ],
+      [
+        2,
+        286
+      ]
+    ]
+  },
+  "Gradient Boosting": {
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1_score": 1.0,
+    "roc_auc": 1.0,
+    "confusion_matrix": [
+      [
+        3312,
+        0
+      ],
+      [
+        0,
+        288
+      ]
+    ]
+  },
+  "Logistic Regression": {
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1_score": 1.0,
+    "roc_auc": 1.0,
+    "confusion_matrix": [
+      [
+        3312,
+        0
+      ],
+      [
+        0,
+        288
+      ]
+    ]
+  },
+  "Random Forest": {
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1_score": 1.0,
+    "roc_auc": 1.0,
+    "confusion_matrix": [
+      [
+        3312,
+        0
+      ],
+      [
+        0,
+        288
+      ]
+    ]
+  },
+  "Multinomial Naive Bayes": {
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1_score": 1.0,
+    "roc_auc": 1.0,
+    "confusion_matrix": [
+      [
+        3312,
+        0
+      ],
+      [
+        0,
+        288
+      ]
+    ]
+  }
+}
