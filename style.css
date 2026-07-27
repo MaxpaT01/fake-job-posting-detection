@@ -1,4 +1,4 @@
-/* GitHub Official Dark Mode Profile Theme */
+/* GitHub Official Dark Mode Profile Theme (Static / No Animations) */
 :root {
     --gh-bg-canvas: #0d1117;
     --gh-bg-subtle: #161b22;
@@ -28,6 +28,8 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    transition: none !important;
+    animation: none !important;
 }
 
 body.gh-dark-body {
@@ -241,7 +243,6 @@ body.gh-dark-body {
     display: flex;
     align-items: center;
     gap: 8px;
-    transition: all 0.15s;
 }
 
 .gh-tab:hover {
@@ -497,7 +498,7 @@ body.gh-dark-body {
     margin-top: 2px;
 }
 
-/* Card Component for Form & Analysis */
+/* Card Component */
 .gh-card {
     background-color: var(--gh-bg-canvas);
     border: 1px solid var(--gh-border-default);
@@ -536,7 +537,6 @@ body.gh-dark-body {
     align-items: center;
     gap: 10px;
     margin-bottom: 16px;
-
 }
 
 .gh-btn-sm {
@@ -593,7 +593,6 @@ body.gh-dark-body {
 .gh-input:focus, .gh-select:focus, .gh-textarea:focus {
     outline: none;
     border-color: var(--gh-link);
-    box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.2);
 }
 
 /* Console Output */
@@ -777,7 +776,7 @@ body.gh-dark-body {
     margin-bottom: 8px;
 }
 
-/* Sidebar Styling (Matches GitHub Repo Right Panel) */
+/* Sidebar Styling */
 .gh-sidebar {
     display: flex;
     flex-direction: column;
