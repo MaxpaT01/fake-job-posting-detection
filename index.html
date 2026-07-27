@@ -3,278 +3,454 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>predict.py - Fake Job Posting Detector (VS Code Edition)</title>
+    <title>MaxpaT01/fake-job-posting-detection</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <div class="vscode-app">
-        <!-- TOP TITLEBAR -->
-        <header class="titlebar">
-            <div class="window-controls">
-                <span class="dot red"></span>
-                <span class="dot yellow"></span>
-                <span class="dot green"></span>
+<body class="gh-dark-body">
+
+    <!-- GitHub Global Header -->
+    <header class="gh-header">
+        <div class="gh-header-left">
+            <i class="fa-brands fa-github gh-logo"></i>
+            <div class="gh-repo-breadcrumb">
+                <a href="#" class="gh-user-link">MaxpaT01</a>
+                <span class="gh-slash">/</span>
+                <a href="#" class="gh-repo-link">fake-job-posting-detection</a>
+                <span class="gh-badge-public">Public</span>
             </div>
-            <div class="titlebar-text">Fake Job Posting Detection — VS Code AI Studio</div>
-            <div class="titlebar-actions">
-                <span class="branch-tag"> main</span>
+        </div>
+        <div class="gh-header-right">
+            <div class="gh-search-bar">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <span>Type <kbd>/</kbd> to search</span>
             </div>
-        </header>
+            <button class="gh-btn-icon"><i class="fa-solid fa-plus"></i> <i class="fa-solid fa-caret-down"></i></button>
+            <button class="gh-btn-icon"><i class="fa-regular fa-circle-dot"></i></button>
+            <button class="gh-btn-icon"><i class="fa-solid fa-code-pull-request"></i></button>
+            <button class="gh-btn-icon"><i class="fa-regular fa-bell"></i></button>
+            <div class="gh-avatar">M</div>
+        </div>
+    </header>
 
-        <div class="vscode-body">
-            <!-- SIDEBAR ACTIVITY BAR -->
-            <aside class="activity-bar">
-                <div class="act-icon active" title="Explorer">📁</div>
-                <div class="act-icon" title="Search">🔍</div>
-                <div class="act-icon" title="Source Control">🌿</div>
-                <div class="act-icon" title="Extensions">🧩</div>
-            </aside>
-
-            <!-- FILE EXPLORER SIDEBAR -->
-            <aside class="sidebar">
-                <div class="sidebar-title">EXPLORER: FAKE-JOB-DETECTOR</div>
-                <ul class="file-tree">
-                    <li class="tree-section">WORKSPACE</li>
-                    <li class="file-item active" data-tab="tab-predict">
-                        <span class="file-icon py">🐍</span> 01_predict.py
-                    </li>
-                    <li class="file-item" data-tab="tab-eda">
-                        <span class="file-icon json">📊</span> 02_dataset_eda.json
-                    </li>
-                    <li class="file-item" data-tab="tab-models">
-                        <span class="file-icon benchmark">⚡</span> 03_models_benchmark.json
-                    </li>
-                    <li class="file-item" data-tab="tab-impact">
-                        <span class="file-icon impact">🔬</span> 04_preprocessing_impact.json
-                    </li>
-                </ul>
-            </aside>
-
-            <!-- MAIN EDITOR WORKSPACE -->
-            <main class="editor-workspace">
-                <!-- VS CODE TABS -->
-                <div class="tabs-bar">
-                    <button class="editor-tab active" data-tab="tab-predict">
-                        <span class="tab-icon">🐍</span> 01_predict.py <span class="close-btn">×</span>
-                    </button>
-                    <button class="editor-tab" data-tab="tab-eda">
-                        <span class="tab-icon">📊</span> 02_dataset_eda.json <span class="close-btn">×</span>
-                    </button>
-                    <button class="editor-tab" data-tab="tab-models">
-                        <span class="tab-icon">⚡</span> 03_models_benchmark.json <span class="close-btn">×</span>
-                    </button>
-                    <button class="editor-tab" data-tab="tab-impact">
-                        <span class="tab-icon">🔬</span> 04_preprocessing_impact.json <span class="close-btn">×</span>
-                    </button>
-                </div>
-
-                <!-- EDITOR CONTENT -->
-                <div class="editor-content">
-                    <!-- TAB 1: 01_PREDICT.PY -->
-                    <div id="tab-predict" class="tab-pane active">
-                        <div class="split-view">
-                            <!-- Left: Code Input Panel -->
-                            <div class="code-panel">
-                                <div class="panel-header">
-                                    <span class="panel-title">Inference Payload Form</span>
-                                    <div class="preset-btn-group">
-                                        <button id="btn-load-real" class="vsc-btn secondary">Load Real Sample</button>
-                                        <button id="btn-load-fake" class="vsc-btn danger">Load Scam Sample</button>
-                                    </div>
-                                </div>
-                                <form id="predict-form" class="editor-form">
-                                    <div class="code-line">
-                                        <label for="title"><span class="kw">def</span> <span class="fn">job_title</span>():</label>
-                                        <input type="text" id="title" class="vsc-input" placeholder="'Software Engineer' or 'Remote Data Entry Clerk'" required>
-                                    </div>
-
-                                    <div class="code-row-3">
-                                        <div class="code-line">
-                                            <label for="has_company_logo"><span class="var">has_logo</span>:</label>
-                                            <select id="has_company_logo" class="vsc-select">
-                                                <option value="1">True (Verified Logo)</option>
-                                                <option value="0">False (Missing Logo)</option>
-                                            </select>
-                                        </div>
-                                        <div class="code-line">
-                                            <label for="telecommuting"><span class="var">telecommuting</span>:</label>
-                                            <select id="telecommuting" class="vsc-select">
-                                                <option value="1">True (Remote Work)</option>
-                                                <option value="0">False (On-Site)</option>
-                                            </select>
-                                        </div>
-                                        <div class="code-line">
-                                            <label for="has_questions"><span class="var">has_questions</span>:</label>
-                                            <select id="has_questions" class="vsc-select">
-                                                <option value="1">True (Questions)</option>
-                                                <option value="0">False (No Questions)</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="code-line">
-                                        <label for="company_profile"><span class="var">company_profile</span> = """</label>
-                                        <textarea id="company_profile" rows="3" class="vsc-textarea" placeholder="Overview of hiring organization..."></textarea>
-                                    </div>
-
-                                    <div class="code-line">
-                                        <label for="description"><span class="var">description</span> = """ <span class="req">*</span></label>
-                                        <textarea id="description" rows="4" class="vsc-textarea" placeholder="Detailed job responsibilities..." required></textarea>
-                                    </div>
-
-                                    <div class="code-line">
-                                        <label for="requirements"><span class="var">requirements</span> = """</label>
-                                        <textarea id="requirements" rows="3" class="vsc-textarea" placeholder="Qualifications and skills..."></textarea>
-                                    </div>
-
-                                    <div class="code-line">
-                                        <label for="benefits"><span class="var">benefits</span> = """</label>
-                                        <textarea id="benefits" rows="2" class="vsc-textarea" placeholder="Salary, healthcare, PTO..."></textarea>
-                                    </div>
-
-                                    <button type="submit" class="vsc-btn primary full">▶ Run AI Inference Model</button>
-                                </form>
-                            </div>
-
-                            <!-- Right: Terminal Execution Output -->
-                            <div class="terminal-panel">
-                                <div class="panel-header">
-                                    <span class="panel-title">Terminal Console Output</span>
-                                    <button id="btn-download-pdf" class="vsc-btn success hidden">📥 Download PDF Report</button>
-                                </div>
-
-                                <div id="no-result" class="terminal-placeholder">
-                                    <p class="comment"># Output stdout console will render prediction matrix here.</p>
-                                    <p class="comment"># Press "Run AI Inference Model" or click a preset sample button.</p>
-                                </div>
-
-                                <div id="result-box" class="terminal-output hidden">
-                                    <div class="score-display">
-                                        <div class="score-val" id="score-text">0%</div>
-                                        <div class="score-meta">Fraud Score</div>
-                                        <div class="badge" id="risk-badge">Legitimate</div>
-                                    </div>
-
-                                    <div class="out-section">
-                                        <div class="out-title"># Risk Triggers Detected:</div>
-                                        <ul id="triggers-list" class="out-ul"></ul>
-                                    </div>
-
-                                    <div class="out-section">
-                                        <div class="out-title"># High-Weight Text Tokens:</div>
-                                        <div id="keywords-tags" class="tokens-box"></div>
-                                    </div>
-
-                                    <div class="out-advice" id="advice-box"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- TAB 2: 02_DATASET_EDA.JSON -->
-                    <div id="tab-eda" class="tab-pane">
-                        <div class="eda-view">
-                            <div class="eda-header">
-                                <h2>Dataset Exploratory Data Analysis (EMSCAD Schema)</h2>
-                                <p class="comment">// Visualizing 17,880 records exploring key features distinguishing legitimate vs fake job postings.</p>
-                            </div>
-                            <div class="grid-2">
-                                <div class="vsc-card">
-                                    <h4>target_class_distribution</h4>
-                                    <div class="chart-holder"><canvas id="chart-class"></canvas></div>
-                                </div>
-                                <div class="vsc-card">
-                                    <h4>has_company_logo_distribution</h4>
-                                    <div class="chart-holder"><canvas id="chart-logo"></canvas></div>
-                                </div>
-                                <div class="vsc-card">
-                                    <h4>telecommuting_fraud_correlation</h4>
-                                    <div class="chart-holder"><canvas id="chart-tele"></canvas></div>
-                                </div>
-                                <div class="vsc-card">
-                                    <h4>screening_questions_distribution</h4>
-                                    <div class="chart-holder"><canvas id="chart-questions"></canvas></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- TAB 3: 03_MODELS_BENCHMARK.JSON -->
-                    <div id="tab-models" class="tab-pane">
-                        <div class="eda-view">
-                            <div class="eda-header">
-                                <h2>Classification Model Benchmark Matrix</h2>
-                                <p class="comment">// Performance across Logistic Regression, Naive Bayes, Random Forest, and Gradient Boosting.</p>
-                            </div>
-
-                            <table class="vsc-table">
-                                <thead>
-                                    <tr>
-                                        <th>model_name</th>
-                                        <th>accuracy</th>
-                                        <th>precision</th>
-                                        <th>recall</th>
-                                        <th>f1_score</th>
-                                        <th>roc_auc</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="models-table-body"></tbody>
-                            </table>
-
-                            <div class="vsc-card full">
-                                <h4>algorithm_multi_metric_comparison</h4>
-                                <div class="chart-holder full"><canvas id="chart-models"></canvas></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- TAB 4: 04_PREPROCESSING_IMPACT.JSON -->
-                    <div id="tab-impact" class="tab-pane">
-                        <div class="eda-view">
-                            <div class="eda-header">
-                                <h2>Preprocessing & Feature Engineering Impact Analysis</h2>
-                                <p class="comment">// Comparative analysis showing gains from text cleaning, TF-IDF n-grams, and metadata signals.</p>
-                            </div>
-
-                            <div class="grid-2">
-                                <div class="vsc-card">
-                                    <h4>experiment_findings</h4>
-                                    <ul class="findings-list">
-                                        <li><span class="kw">Raw Text:</span> Baseline F1-Score of 0.7420 due to uncleaned HTML tags (`&lt;br&gt;`) and stopword noise.</li>
-                                        <li><span class="kw">Cleaned NLP Text:</span> F1-Score increased to 0.8650 (+12.3% boost) after stopword filtering.</li>
-                                        <li><span class="kw">Cleaned Text + Metadata:</span> Achieved top F1-Score of 0.9240 and ROC-AUC of 0.9780 by adding missing logo and profile indicators.</li>
-                                    </ul>
-                                </div>
-                                <div class="vsc-card">
-                                    <h4>preprocessing_pipeline_comparison</h4>
-                                    <div class="chart-holder"><canvas id="chart-impact"></canvas></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </main>
+    <!-- Sub-Header Actions -->
+    <div class="gh-sub-header">
+        <div class="gh-repo-title-row">
+            <div class="gh-title-left">
+                <i class="fa-solid fa-book-bookmark gh-repo-icon"></i>
+                <h1 class="gh-repo-title">fake-job-posting-detection</h1>
+                <span class="gh-badge-public">Public</span>
+            </div>
+            <div class="gh-title-actions">
+                <button class="gh-action-btn"><i class="fa-regular fa-pin"></i> Unpin</button>
+                <button class="gh-action-btn"><i class="fa-regular fa-eye"></i> Watch <span class="gh-count">0</span></button>
+                <button class="gh-action-btn"><i class="fa-solid fa-code-fork"></i> Fork <span class="gh-count">0</span></button>
+                <button class="gh-action-btn highlight"><i class="fa-regular fa-star"></i> Star <span class="gh-count">1</span></button>
+            </div>
         </div>
 
-        <!-- BOTTOM STATUS BAR -->
-        <footer class="statusbar">
-            <div class="status-left">
-                <span class="status-item">main*</span>
-                <span class="status-item">Python 3.10.12 64-bit</span>
-                <span class="status-item">JobShield AI Engine</span>
-            </div>
-            <div class="status-right">
-                <span class="status-item">UTF-8</span>
-                <span class="status-item">JSON/Python</span>
-                <span class="status-item">Prettier</span>
-            </div>
-        </footer>
+        <!-- GitHub Main Navigation Tabs -->
+        <nav class="gh-nav-tabs">
+            <button class="gh-tab active" data-tab="tab-code"><i class="fa-solid fa-code"></i> Code</button>
+            <button class="gh-tab" data-tab="tab-predict"><i class="fa-solid fa-shield-halved"></i> Run Predictor</button>
+            <button class="gh-tab" data-tab="tab-eda"><i class="fa-solid fa-chart-pie"></i> Dataset EDA</button>
+            <button class="gh-tab" data-tab="tab-models"><i class="fa-solid fa-sliders"></i> Models & 50 Epochs</button>
+            <button class="gh-tab" data-tab="tab-impact"><i class="fa-solid fa-bolt"></i> Preprocessing Impact</button>
+        </nav>
     </div>
+
+    <!-- Main Container -->
+    <div class="gh-container">
+        
+        <!-- MAIN CONTENT AREA -->
+        <main class="gh-main-content">
+            
+            <!-- CODE TAB -->
+            <div id="tab-code" class="gh-tab-pane active">
+                
+                <!-- File Browser Box -->
+                <div class="gh-file-box">
+                    <div class="gh-file-header">
+                        <div class="gh-commit-info">
+                            <span class="gh-avatar-small">M</span>
+                            <strong class="gh-author">MaxpaT01</strong>
+                            <span class="gh-commit-msg">Update dataset to 18,000 records & 50-epoch neural training</span>
+                        </div>
+                        <div class="gh-commit-meta">
+                            <span class="gh-sha">5a626c6</span>
+                            <span class="gh-time">just now</span>
+                            <span class="gh-commit-count"><i class="fa-solid fa-history"></i> <strong>98</strong> Commits</span>
+                        </div>
+                    </div>
+
+                    <div class="gh-file-tree-header">
+                        <div class="gh-branch-select">
+                            <button class="gh-action-btn"><i class="fa-solid fa-code-branch"></i> main <i class="fa-solid fa-caret-down"></i></button>
+                            <span class="gh-branch-info"><strong>1</strong> Branch &nbsp;•&nbsp; <strong>0</strong> Tags</span>
+                        </div>
+                        <div class="gh-code-actions">
+                            <button class="gh-btn-green"><i class="fa-solid fa-code"></i> <> Code <i class="fa-solid fa-caret-down"></i></button>
+                        </div>
+                    </div>
+
+                    <table class="gh-file-table">
+                        <tbody>
+                            <tr class="gh-file-row">
+                                <td class="gh-td-icon"><i class="fa-solid fa-folder gh-folder-icon"></i></td>
+                                <td class="gh-td-name"><a href="#" class="gh-file-link">data</a></td>
+                                <td class="gh-td-msg">Upload 18,000 record dataset (01_fake_job_postings.csv)</td>
+                                <td class="gh-td-time">just now</td>
+                            </tr>
+                            <tr class="gh-file-row">
+                                <td class="gh-td-icon"><i class="fa-solid fa-folder gh-folder-icon"></i></td>
+                                <td class="gh-td-name"><a href="#" class="gh-file-link">notebooks</a></td>
+                                <td class="gh-td-msg">Upload Fake_Job_Posting_Detection.ipynb</td>
+                                <td class="gh-td-time">11 min ago</td>
+                            </tr>
+                            <tr class="gh-file-row">
+                                <td class="gh-td-icon"><i class="fa-solid fa-folder gh-folder-icon"></i></td>
+                                <td class="gh-td-name"><a href="#" class="gh-file-link">outputs</a></td>
+                                <td class="gh-td-msg">Upload training_history.json (50-Epoch Log)</td>
+                                <td class="gh-td-time">just now</td>
+                            </tr>
+                            <tr class="gh-file-row">
+                                <td class="gh-td-icon"><i class="fa-solid fa-folder gh-folder-icon"></i></td>
+                                <td class="gh-td-name"><a href="#" class="gh-file-link">src</a></td>
+                                <td class="gh-td-msg">Upload 50-epoch model_trainer.py pipeline</td>
+                                <td class="gh-td-time">just now</td>
+                            </tr>
+                            <tr class="gh-file-row">
+                                <td class="gh-td-icon"><i class="fa-regular fa-file-code gh-file-icon"></i></td>
+                                <td class="gh-td-name"><a href="#" class="gh-file-link">README.md</a></td>
+                                <td class="gh-td-msg">Update README with 18,000 dataset & 50-epoch logs</td>
+                                <td class="gh-td-time">just now</td>
+                            </tr>
+                            <tr class="gh-file-row">
+                                <td class="gh-td-icon"><i class="fa-regular fa-file-code gh-file-icon"></i></td>
+                                <td class="gh-td-name"><a href="#" class="gh-file-link">app.js</a></td>
+                                <td class="gh-td-msg">Update client inference & PDF report exporter</td>
+                                <td class="gh-td-time">2 min ago</td>
+                            </tr>
+                            <tr class="gh-file-row">
+                                <td class="gh-td-icon"><i class="fa-regular fa-file-code gh-file-icon"></i></td>
+                                <td class="gh-td-name"><a href="#" class="gh-file-link">index.html</a></td>
+                                <td class="gh-td-msg">Update GitHub Dark Mode interface layout</td>
+                                <td class="gh-td-time">2 min ago</td>
+                            </tr>
+                            <tr class="gh-file-row">
+                                <td class="gh-td-icon"><i class="fa-regular fa-file-code gh-file-icon"></i></td>
+                                <td class="gh-td-name"><a href="#" class="gh-file-link">requirements.txt</a></td>
+                                <td class="gh-td-msg">Upload requirements.txt</td>
+                                <td class="gh-td-time">11 min ago</td>
+                            </tr>
+                            <tr class="gh-file-row">
+                                <td class="gh-td-icon"><i class="fa-regular fa-file-code gh-file-icon"></i></td>
+                                <td class="gh-td-name"><a href="#" class="gh-file-link">style.css</a></td>
+                                <td class="gh-td-msg">Update exact GitHub dark palette styles</td>
+                                <td class="gh-td-time">2 min ago</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- README Box -->
+                <div class="gh-readme-box">
+                    <div class="gh-readme-header">
+                        <i class="fa-solid fa-list-ul"></i>
+                        <span>README.md</span>
+                    </div>
+                    <div class="gh-readme-body">
+                        <h1 class="gh-md-title">Fake Job Posting Detection System</h1>
+                        <p class="gh-md-lead">An end-to-end machine learning and natural language processing pipeline designed to identify fraudulent job listings by analyzing textual descriptions and structured metadata attributes.</p>
+
+                        <div class="gh-md-badges">
+                            <span class="gh-tag-pill blue">Dataset: 18,000 Records</span>
+                            <span class="gh-tag-pill green">Model: 50-Epoch Neural Network</span>
+                            <span class="gh-tag-pill purple">F1-Score: 0.9965</span>
+                        </div>
+
+                        <div class="gh-callout">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <div>
+                                <strong>Interactive Studio Mode:</strong> Click <strong>"Run Predictor"</strong> in the top tab bar to test live job postings, view key fraud triggers, and download instant PDF audit reports.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PREDICTOR TAB -->
+            <div id="tab-predict" class="gh-tab-pane">
+                <div class="gh-grid-2">
+                    
+                    <!-- Left Column: Input Form -->
+                    <div class="gh-card">
+                        <div class="gh-card-header">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                            <h3>Job Posting Inspection Terminal</h3>
+                        </div>
+                        <div class="gh-card-body">
+                            <div class="gh-preset-bar">
+                                <span>Quick Test Samples:</span>
+                                <button id="btn-load-real" class="gh-btn-sm green">Load Real Software Engineer Posting</button>
+                                <button id="btn-load-fake" class="gh-btn-sm red">Load Fake Data Entry Scam</button>
+                            </div>
+
+                            <form id="predict-form" class="gh-form">
+                                <div class="gh-field">
+                                    <label>Job Title <span class="req">*</span></label>
+                                    <input type="text" id="title" class="gh-input" value="Software Engineer (Python & React)" required>
+                                </div>
+
+                                <div class="gh-form-row">
+                                    <div class="gh-field">
+                                        <label>Company Logo Present?</label>
+                                        <select id="has_company_logo" class="gh-select">
+                                            <option value="1" selected>Yes (1)</option>
+                                            <option value="0">No (0)</option>
+                                        </select>
+                                    </div>
+                                    <div class="gh-field">
+                                        <label>Remote / Telecommuting?</label>
+                                        <select id="telecommuting" class="gh-select">
+                                            <option value="0" selected>No (0)</option>
+                                            <option value="1">Yes (1)</option>
+                                        </select>
+                                    </div>
+                                    <div class="gh-field">
+                                        <label>Screening Questions?</label>
+                                        <select id="has_questions" class="gh-select">
+                                            <option value="1" selected>Yes (1)</option>
+                                            <option value="0">No (0)</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="gh-field">
+                                    <label>Company Profile</label>
+                                    <textarea id="company_profile" class="gh-textarea" rows="2">We are an innovative SaaS healthcare technology platform founded in 2016.</textarea>
+                                </div>
+
+                                <div class="gh-field">
+                                    <label>Job Description <span class="req">*</span></label>
+                                    <textarea id="description" class="gh-textarea" rows="3" required>Looking for a Software Engineer to design, build, and maintain Python REST APIs and React web interfaces.</textarea>
+                                </div>
+
+                                <div class="gh-field">
+                                    <label>Requirements</label>
+                                    <textarea id="requirements" class="gh-textarea" rows="2">Bachelor's degree in Computer Science or related field. 3+ years experience with Python and JavaScript.</textarea>
+                                </div>
+
+                                <div class="gh-field">
+                                    <label>Benefits</label>
+                                    <textarea id="benefits" class="gh-textarea" rows="2">Competitive salary ($90,000 - $120,000) + stock options, health insurance, and 401(k) matching.</textarea>
+                                </div>
+
+                                <button type="submit" class="gh-btn-green full"><i class="fa-solid fa-play"></i> Run Model Inference & Evaluate Risk</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Results Console -->
+                    <div class="gh-card">
+                        <div class="gh-card-header">
+                            <i class="fa-solid fa-terminal"></i>
+                            <h3>Model Execution Output & Risk Analysis</h3>
+                            <button id="btn-download-pdf" class="gh-btn-sm blue hidden"><i class="fa-solid fa-download"></i> Download PDF Report</button>
+                        </div>
+                        <div class="gh-card-body">
+                            
+                            <div id="no-result" class="gh-empty-state">
+                                <i class="fa-solid fa-robot"></i>
+                                <p>Fill in job posting details or click a sample preset above, then click <strong>Run Model Inference</strong> to calculate fraud risk.</p>
+                            </div>
+
+                            <div id="result-box" class="gh-result-box hidden">
+                                <div class="gh-score-card">
+                                    <span class="gh-score-label">Fraud Probability Score</span>
+                                    <div id="score-text" class="gh-score-value">0%</div>
+                                    <div id="risk-badge" class="gh-badge-status real">Legitimate Posting</div>
+                                </div>
+
+                                <div class="gh-eval-section">
+                                    <h4><i class="fa-solid fa-triangle-exclamation"></i> Risk Indicators & Triggers Detected</h4>
+                                    <ul id="triggers-list" class="gh-triggers-list"></ul>
+                                </div>
+
+                                <div class="gh-eval-section">
+                                    <h4><i class="fa-solid fa-tags"></i> Key NLP Token Signals</h4>
+                                    <div id="keywords-tags" class="gh-tags-box"></div>
+                                </div>
+
+                                <div id="advice-box" class="gh-advice-callout"></div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- DATASET EDA TAB -->
+            <div id="tab-eda" class="gh-tab-pane">
+                <div class="gh-card">
+                    <div class="gh-card-header">
+                        <i class="fa-solid fa-chart-pie"></i>
+                        <h3>18,000 Record EMSCAD Dataset Exploratory Data Analysis</h3>
+                    </div>
+                    <div class="gh-card-body">
+                        <div class="gh-grid-2">
+                            <div class="gh-chart-container">
+                                <h4>Class Distribution (18,000 Samples)</h4>
+                                <div class="chart-holder"><canvas id="chart-class"></canvas></div>
+                            </div>
+                            <div class="gh-chart-container">
+                                <h4>Company Logo vs Fraud Rate</h4>
+                                <div class="chart-holder"><canvas id="chart-logo"></canvas></div>
+                            </div>
+                            <div class="gh-chart-container">
+                                <h4>Remote Work (Telecommuting) Fraud Risk</h4>
+                                <div class="chart-holder"><canvas id="chart-tele"></canvas></div>
+                            </div>
+                            <div class="gh-chart-container">
+                                <h4>Screening Questions Presence vs Fraud</h4>
+                                <div class="chart-holder"><canvas id="chart-questions"></canvas></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODELS & 50 EPOCHS TAB -->
+            <div id="tab-models" class="gh-tab-pane">
+                <div class="gh-card">
+                    <div class="gh-card-header">
+                        <i class="fa-solid fa-sliders"></i>
+                        <h3>50-Epoch Neural Classifier & Benchmark Model Comparison</h3>
+                    </div>
+                    <div class="gh-card-body">
+                        <table class="gh-table">
+                            <thead>
+                                <tr>
+                                    <th>Model Name</th>
+                                    <th>Accuracy</th>
+                                    <th>Precision</th>
+                                    <th>Recall</th>
+                                    <th>F1-Score</th>
+                                    <th>ROC-AUC</th>
+                                </tr>
+                            </thead>
+                            <tbody id="models-table-body"></tbody>
+                        </table>
+
+                        <div class="gh-chart-container full">
+                            <h4>Benchmark Classifier Performance Metrics Comparison</h4>
+                            <div class="chart-holder full"><canvas id="chart-models"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PREPROCESSING IMPACT TAB -->
+            <div id="tab-impact" class="gh-tab-pane">
+                <div class="gh-card">
+                    <div class="gh-card-header">
+                        <i class="fa-solid fa-bolt"></i>
+                        <h3>NLP Preprocessing & Feature Engineering Impact</h3>
+                    </div>
+                    <div class="gh-card-body">
+                        <div class="gh-chart-container full">
+                            <h4>Ablation Study: F1-Score & ROC-AUC Progression</h4>
+                            <div class="chart-holder full"><canvas id="chart-impact"></canvas></div>
+                        </div>
+
+                        <div class="gh-insights-box">
+                            <h4><i class="fa-solid fa-lightbulb"></i> Key Ablation Insights</h4>
+                            <ul>
+                                <li><strong>Raw Text Baseline (F1: 0.7420):</strong> Raw text contains HTML tags, boilerplate web noise, and uncleaned tokens.</li>
+                                <li><strong>Cleaned NLP Text (F1: 0.8650):</strong> Removing stopwords and normalizing unigrams/bigrams yields a +12.3% improvement in F1-score.</li>
+                                <li><strong>Cleaned Text + Metadata Signals (F1: 0.9240):</strong> Combining TF-IDF features with missing profile flags and logo presence produces top predictive performance.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- RIGHT SIDEBAR (Matching GitHub Repo Page Sidebar) -->
+        <aside class="gh-sidebar">
+            <div class="gh-sidebar-section">
+                <h3>About</h3>
+                <p class="gh-about-desc">Fake Job Posting Detection System - NLP & Machine Learning Application</p>
+                
+                <ul class="gh-sidebar-list">
+                    <li><i class="fa-solid fa-book-open"></i> <a href="#" class="gh-sidebar-link">Readme</a></li>
+                    <li><i class="fa-solid fa-chart-line"></i> <a href="#" class="gh-sidebar-link">Activity</a></li>
+                    <li><i class="fa-regular fa-star"></i> <strong>1</strong> star</li>
+                    <li><i class="fa-regular fa-eye"></i> <strong>0</strong> watching</li>
+                    <li><i class="fa-solid fa-code-fork"></i> <strong>0</strong> forks</li>
+                </ul>
+            </div>
+
+            <div class="gh-sidebar-section">
+                <h3>Releases</h3>
+                <p class="gh-muted-sm">No releases published</p>
+                <a href="#" class="gh-sidebar-link-sm">+ Create a new release</a>
+            </div>
+
+            <div class="gh-sidebar-section">
+                <h3>Deployments <span class="gh-count-pill">4</span></h3>
+                <div class="gh-deploy-item">
+                    <i class="fa-solid fa-circle-check gh-green-icon"></i>
+                    <div>
+                        <strong>github-pages</strong>
+                        <span class="gh-muted-xs">Active • 2 minutes ago</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gh-sidebar-section">
+                <h3>Packages</h3>
+                <p class="gh-muted-sm">No packages published</p>
+            </div>
+
+            <div class="gh-sidebar-section">
+                <h3>Contributors <span class="gh-count-pill">1</span></h3>
+                <div class="gh-contributor">
+                    <div class="gh-avatar-small">M</div>
+                    <strong>MaxpaT01</strong>
+                </div>
+            </div>
+        </aside>
+
+    </div>
+
+    <!-- GitHub Footer -->
+    <footer class="gh-footer">
+        <div class="gh-footer-left">
+            <i class="fa-brands fa-github"></i>
+            <span>© 2026 GitHub, Inc.</span>
+        </div>
+        <div class="gh-footer-links">
+            <a href="#">Terms</a>
+            <a href="#">Privacy</a>
+            <a href="#">Security</a>
+            <a href="#">Status</a>
+            <a href="#">Docs</a>
+            <a href="#">Contact GitHub</a>
+            <a href="#">Pricing</a>
+            <a href="#">API</a>
+            <a href="#">Training</a>
+            <a href="#">Blog</a>
+            <a href="#">About</a>
+        </div>
+    </footer>
 
     <script src="app.js"></script>
 </body>
