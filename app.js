@@ -1,7 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // -------------------------------------------------------------
-    // TAB NAVIGATION
-    // -------------------------------------------------------------
     const tabLinks = document.querySelectorAll('.tab-link');
     const tabPanes = document.querySelectorAll('.tab-pane');
 
@@ -16,9 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // -------------------------------------------------------------
-    // PRESET SAMPLES
-    // -------------------------------------------------------------
     const sampleReal = {
         title: "Software Engineer (Python & React)",
         has_company_logo: "1",
@@ -35,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
         has_company_logo: "0",
         telecommuting: "1",
         has_questions: "0",
-        company_profile: "", // Missing company profile
+        company_profile: "",
         description: "Earn money easily working from home entering order data! Flexible 2 hours daily. Instant daily payment via PayPal, Zelle, or Wire Transfer. No experience required!",
         requirements: "Must have computer with internet connection and active personal bank account. Contact manager via Telegram.",
         benefits: "High daily payouts up to $500/day. Immediate payment upon task completion."
@@ -55,9 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('benefits').value = data.benefits;
     }
 
-    // -------------------------------------------------------------
-    // PREDICTION LOGIC & SPAM PATTERN RULES
-    // -------------------------------------------------------------
     const SPAM_RULES = [
         { word: "earn", weight: 0.12, label: "Promotional Earning Claims" },
         { word: "paypal", weight: 0.20, label: "Unstandard Payment Method (PayPal)" },
@@ -102,11 +93,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const fullText = (title + " " + profile + " " + desc + " " + req + " " + ben).toLowerCase();
 
-        let score = 0.05; // Base fraud prior (~5%)
+        let score = 0.05;
         let triggers = [];
         let tags = [];
 
-        // Text Rule Check
         SPAM_RULES.forEach(r => {
             if (fullText.includes(r.word)) {
                 score += r.weight;
@@ -122,7 +112,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Metadata Signals
         if (logo === 0) {
             score += 0.22;
             triggers.push({ type: "med", text: "Missing Company Logo: Fraud rate is 3.5x higher without corporate logo." });
@@ -175,7 +164,6 @@ document.addEventListener('DOMContentLoaded', () => {
         badge.className = `badge ${badgeClass}`;
         badge.textContent = badgeText;
 
-        // Triggers List
         const ul = document.getElementById('triggers-list');
         ul.innerHTML = '';
         if (triggers.length === 0) {
@@ -189,7 +177,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Keywords Tags
         const tagsBox = document.getElementById('keywords-tags');
         tagsBox.innerHTML = '';
         if (tags.length === 0) {
@@ -203,7 +190,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Advice Box
         const advice = document.getElementById('advice-box');
         if (scorePct >= 65) {
             advice.innerHTML = '<strong style="color:#dc2626;">Recommendation: DO NOT APPLY</strong><br>Contains major red flags associated with payment recruitment scams.';
@@ -214,9 +200,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // -------------------------------------------------------------
-    // PDF DOWNLOAD HANDLER
-    // -------------------------------------------------------------
     document.getElementById('btn-download-pdf').addEventListener('click', () => {
         if (!currentAnalysisResult) return;
 
@@ -270,9 +253,6 @@ document.addEventListener('DOMContentLoaded', () => {
         html2pdf().set(opt).from(pdfElement).save();
     });
 
-    // -------------------------------------------------------------
-    // CHARTS & BENCHMARKS
-    // -------------------------------------------------------------
     initCharts();
     initTable();
 });
@@ -281,7 +261,6 @@ function initCharts() {
     Chart.defaults.font.family = "'Inter', sans-serif";
     Chart.defaults.color = '#64748b';
 
-    // 1. Target Class
     new Chart(document.getElementById('chart-class'), {
         type: 'doughnut',
         data: {
@@ -291,7 +270,6 @@ function initCharts() {
         options: { responsive: true, maintainAspectRatio: false }
     });
 
-    // 2. Company Logo Rate
     new Chart(document.getElementById('chart-logo'), {
         type: 'bar',
         data: {
@@ -304,7 +282,6 @@ function initCharts() {
         options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100 } } }
     });
 
-    // 3. Telecommuting Fraud Correlation
     new Chart(document.getElementById('chart-tele'), {
         type: 'bar',
         data: {
@@ -314,7 +291,6 @@ function initCharts() {
         options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 20 } } }
     });
 
-    // 4. Screening Questions Rate
     new Chart(document.getElementById('chart-questions'), {
         type: 'bar',
         data: {
@@ -327,7 +303,6 @@ function initCharts() {
         options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100 } } }
     });
 
-    // 5. Preprocessing Impact Chart
     new Chart(document.getElementById('chart-impact'), {
         type: 'bar',
         data: {
